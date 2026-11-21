@@ -1,1 +1,165 @@
-/* Design tokens – filled in P0-T03 from DESIGN.md */
+/*
+ * tokens.css — Cut List Calculator design tokens
+ * Single source of truth for colour, type, spacing, radius, shadow, motion.
+ * Implements DESIGN.md exactly. Nothing outside this file may hard-code a
+ * colour, font-size, spacing value or radius.
+ *
+ * Theme structure:
+ *   :root              — light theme (default)
+ *   :root[data-theme="dark"]  — dark theme override
+ * The inline <head> script sets data-theme before first paint (no flash).
+ */
+
+/* =========================================================
+   1. COLOUR — light theme
+   Contrast ratios verified against DESIGN.md section 2.
+   Body/label text: 7:1 minimum in both themes.
+   ========================================================= */
+:root {
+  --color-bg:           #FFFFFF;   /* page background */
+  --color-surface:      #F4F6F8;   /* cards, panels */
+  --color-text:         #12161C;   /* body, labels          — 18.2:1 on bg */
+  --color-text-muted:   #3B4554;   /* hints, captions       —  9.7:1 on bg, 8.9:1 on surface */
+  --color-border:       #6B7686;   /* inputs, dividers      —  4.6:1 on bg */
+  --color-brand:        #0A55A8;   /* buttons, links, focus —  7.3:1 on bg */
+  --color-brand-hover:  #08447F;   /* hover / pressed */
+  --color-on-brand:     #FFFFFF;   /* text on brand bg      —  7.3:1 on brand */
+  --color-danger:       #B3261E;   /* errors                —  6.5:1 on bg */
+  --color-success:      #1B6B3A;   /* success               —  6.5:1 on bg */
+  --color-warning:      #7A4A00;   /* warnings, verify note —  7.5:1 on bg */
+
+  /* Diagram — always light-paper so it reads & prints the same in both themes */
+  --diagram-paper:          #FFFFFF;
+  --diagram-ink:            #12161C;   /* text and cut lines — 18:1 on paper */
+  --diagram-stock-border:   #3B4554;
+  --diagram-waste:          #E6E9ED;   /* filled with diagonal hatch in SVG */
+  --diagram-piece-1:        #CFE3FA;
+  --diagram-piece-2:        #F9DDB0;
+  --diagram-piece-3:        #CDEBD5;
+  --diagram-piece-4:        #F4CFE0;
+  --diagram-piece-5:        #E0D6F5;
+  --diagram-piece-6:        #D9E8A8;
+  /* All piece colours are 12.8:1 or better against --diagram-ink */
+}
+
+/* =========================================================
+   2. COLOUR — dark theme override
+   ========================================================= */
+:root[data-theme="dark"] {
+  --color-bg:           #0E1217;
+  --color-surface:      #171C23;
+  --color-text:         #F1F4F8;   /* 17.0:1 on bg */
+  --color-text-muted:   #B8C1CE;   /* 10.3:1 on bg, 9.4:1 on surface */
+  --color-border:       #7F8A9B;   /*  5.4:1 on bg */
+  --color-brand:        #7DB8FF;   /*  9.1:1 on bg */
+  --color-brand-hover:  #A3CCFF;
+  --color-on-brand:     #0E1217;   /*  9.1:1 on brand */
+  --color-danger:       #FF9C94;   /*  9.3:1 on bg */
+  --color-success:      #7BDCA0;   /* 11.3:1 on bg */
+  --color-warning:      #FFC46B;   /* 12.0:1 on bg */
+  /* Diagram tokens remain unchanged — always light paper */
+}
+
+/* =========================================================
+   3. TYPOGRAPHY
+   System font stack — no download, works offline.
+   ========================================================= */
+:root {
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Consolas, "Liberation Mono", monospace;
+
+  /* Scale: 1 rem = 16 px browser default */
+  --text-caption: 0.875rem;   /* 14 px — minimum anywhere */
+  --text-small:   1rem;       /* 16 px — secondary text, table cells */
+  --text-body:    1.125rem;   /* 18 px — body, labels */
+  --text-input:   1.25rem;    /* 20 px — inputs, buttons */
+  --text-h3:      1.5rem;     /* 24 px */
+  --text-h2:      1.875rem;   /* 30 px */
+  --text-h1:      2.375rem;   /* 38 px; 2rem on phones (set in base.css) */
+
+  /* Line heights */
+  --leading-body:    1.6;
+  --leading-heading: 1.2;
+
+  /* Weights */
+  --weight-body:    400;
+  --weight-label:   600;
+  --weight-heading: 700;
+
+  /* Max line length for readability */
+  --prose-width: 70ch;
+
+  /* Numeric figures */
+  --numeric-tabular: tabular-nums;
+}
+
+/* =========================================================
+   4. SPACING  (4 px base scale)
+   ========================================================= */
+:root {
+  --space-1:  0.25rem;   /*  4 px */
+  --space-2:  0.5rem;    /*  8 px */
+  --space-3:  0.75rem;   /* 12 px */
+  --space-4:  1rem;      /* 16 px */
+  --space-5:  1.5rem;    /* 24 px */
+  --space-6:  2rem;      /* 32 px */
+  --space-7:  3rem;      /* 48 px */
+  --space-8:  4rem;      /* 64 px */
+}
+
+/* =========================================================
+   5. RADIUS
+   ========================================================= */
+:root {
+  --radius-s: 6px;    /* inputs, buttons */
+  --radius-m: 12px;   /* cards */
+}
+
+/* =========================================================
+   6. SHADOW
+   Prefer borders. Use shadows sparingly.
+   ========================================================= */
+:root {
+  --shadow-1: 0 1px 3px 0 rgb(0 0 0 / 0.10), 0 1px 2px -1px rgb(0 0 0 / 0.08);
+  --shadow-2: 0 4px 12px 0 rgb(0 0 0 / 0.14), 0 2px 4px -2px rgb(0 0 0 / 0.08);
+}
+
+/* =========================================================
+   7. MOTION
+   120–200 ms ease-out; reduced motion removes all animation.
+   ========================================================= */
+:root {
+  --duration-fast:   120ms;
+  --duration-normal: 200ms;
+  --easing:          ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast:   0ms;
+    --duration-normal: 0ms;
+  }
+}
+
+/* =========================================================
+   8. LAYOUT
+   ========================================================= */
+:root {
+  --content-max-width:  1120px;
+  --gutter-mobile:      var(--space-4);   /* 16 px */
+  --gutter-desktop:     var(--space-5);   /* 24 px */
+
+  /* Breakpoints (use in media queries; not usable in calc without JS) */
+  /* 640 px | 960 px | 1280 px */
+}
+
+/* =========================================================
+   9. INTERACTION
+   ========================================================= */
+:root {
+  --tap-target-min:  48px;
+  --input-height:    56px;
+  --button-height:   56px;
+  --focus-ring:      3px solid var(--color-brand);
+  --focus-offset:    2px;
+}

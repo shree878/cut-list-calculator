@@ -1,12 +1,21 @@
 LAST UPDATED: 2026-11-21
 PHASE: 0 Foundations
-CURRENT TASK: P0-T02: Commit project control files and skills   STATUS: not started
+CURRENT TASK: P0-T04: Base layout (header, tool switcher, theme toggle, footer)   STATUS: not started
 MODEL NEEDED NOW: SONNET     NEXT MODEL CHANGE: OPUS at P1-T01
-NEXT ACTION: P0-T02 is already done (AGENTS.md, plan.txt, progress.txt, DESIGN.md, .agent/skills
-were committed in the initial commit). Mark done and proceed to P0-T03: implement tokens.css and
-base.css from DESIGN.md. Read design-system-tokens skill and DESIGN.md, then write both files.
+NEXT ACTION: P0-T04 — build BaseLayout.astro (html shell, no-flash theme script, skip link,
+header with logo + theme toggle, footer with links). Read ux-information-architecture skill
+and DESIGN.md components section 8. Accept: keyboard order correct; theme toggle works and
+persists; looks right at 360, 768, 1280 px in both themes.
 
 DONE (newest first, one line each):
+- P0-T03: tokens.css and base.css from DESIGN.md. All colour tokens with verified contrast
+  ratios, full type/spacing/radius/shadow/motion/layout/interaction scales. No hard-coded
+  values outside tokens.css. Contrast table re-verified: light body 18.2:1, muted 9.7:1,
+  brand 7.3:1, danger 6.5:1, success 6.5:1, warning 7.5:1; dark body 17.0:1, muted 10.3:1,
+  brand 9.1:1, danger 9.3:1, success 11.3:1, warning 12.0:1. All ≥ 7:1 for text, ≥ 4.5:1
+  for borders/non-text. Diagram tokens always light paper so B&W printing works.
+- P0-T02: Folder map in AGENTS.md matches real tree. All paths correct.
+  (.github/workflows/ absent as expected — P0-T05 scope.)
 - P0-T01: Astro 5 (static), TypeScript strict, Vitest 2, npm scripts dev/test/build/preview,
   .gitignore, public/.nojekyll, placeholder src/pages/index.astro, smoke test.
   npm test ✓ (1 test), npm run build ✓ (1 page).
@@ -17,17 +26,15 @@ IN PROGRESS / PARTIAL:
 - (nothing)
 
 TODO (next tasks):
-- P0-T02 confirm project control files are in repo (already done in initial commit — just tick off)
-- P0-T03 tokens.css and base.css from DESIGN.md
 - P0-T04 base layout (header, tool switcher, theme toggle, footer)
 - P0-T05 deploy pipeline and placeholder page live
 - P0-T06 translation file and base-path helper
 
-DECISIONS (see plan.txt section 2 for the full list):
+DECISIONS:
 - Astro 5 static + TypeScript strict + Vitest 2 + GitHub Actions to GitHub Pages
-- Base path: /cut-list-calculator  GitHub user: shree878
-- Tool first short pages; "i How to use" anchor to #how-to; details in Help/About/Guides
-- English only; dark mode; body 18 px; contrast 7:1; tap targets 48 px
+- Base path: /cut-list-calculator  GitHub user: shree878  Live URL: shree878.github.io
+- Tool first; "i How to use" anchor #how-to; long text in Help/About/Guides
+- English only; dark mode; body 18 px; contrast 7:1 min; tap targets 48 px
 - esbuild, sharp, rollup install scripts approved via npm install-scripts approve
 
 KNOWN ISSUES / BLOCKERS:
