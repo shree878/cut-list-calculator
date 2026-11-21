@@ -1,28 +1,37 @@
 LAST UPDATED: 2026-11-21
 PHASE: 0 Foundations
-CURRENT TASK: P0-T01: Create repo and Astro project   STATUS: not started
+CURRENT TASK: P0-T02: Commit project control files and skills   STATUS: not started
 MODEL NEEDED NOW: SONNET     NEXT MODEL CHANGE: OPUS at P1-T01
-NEXT ACTION: Create the Astro project (static output, TypeScript strict) in the repo root without touching AGENTS.md, plan.txt, progress.txt, DESIGN.md or .agent/; add npm scripts dev, test, build, preview; install Vitest; add .gitignore and .nojekyll; run build and test; commit as "P0-T01: ...".
+NEXT ACTION: P0-T02 is already done (AGENTS.md, plan.txt, progress.txt, DESIGN.md, .agent/skills
+were committed in the initial commit). Mark done and proceed to P0-T03: implement tokens.css and
+base.css from DESIGN.md. Read design-system-tokens skill and DESIGN.md, then write both files.
 
 DONE (newest first, one line each):
-- (nothing yet)
+- P0-T01: Astro 5 (static), TypeScript strict, Vitest 2, npm scripts dev/test/build/preview,
+  .gitignore, public/.nojekyll, placeholder src/pages/index.astro, smoke test.
+  npm test ✓ (1 test), npm run build ✓ (1 page).
+  Base path: /cut-list-calculator (GitHub user: shree878).
+- P0-T00: project control files (AGENTS.md, plan.txt, progress.txt, DESIGN.md, .agent/skills).
 
 IN PROGRESS / PARTIAL:
 - (nothing)
 
 TODO (next tasks):
-- P0-T02 commit project files and skills
+- P0-T02 confirm project control files are in repo (already done in initial commit — just tick off)
 - P0-T03 tokens.css and base.css from DESIGN.md
 - P0-T04 base layout (header, tool switcher, theme toggle, footer)
 - P0-T05 deploy pipeline and placeholder page live
 - P0-T06 translation file and base-path helper
 
 DECISIONS (see plan.txt section 2 for the full list):
-- Astro static + TypeScript strict + Vitest + GitHub Actions to GitHub Pages
+- Astro 5 static + TypeScript strict + Vitest 2 + GitHub Actions to GitHub Pages
+- Base path: /cut-list-calculator  GitHub user: shree878
 - Tool first short pages; "i How to use" anchor to #how-to; details in Help/About/Guides
 - English only; dark mode; body 18 px; contrast 7:1; tap targets 48 px
+- esbuild, sharp, rollup install scripts approved via npm install-scripts approve
 
 KNOWN ISSUES / BLOCKERS:
-- Open: GitHub username and repo URL needed for the base path (plan.txt Q1)
+- Q2: Contact email or form for the About page (not blocking yet)
+- Q3: Home page hub or stays Linear tool? (decide at Phase 3)
 
 DEPLOY: not deployed yet

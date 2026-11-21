@@ -1,0 +1,3 @@
+// Pure algorithm modules live here (no DOM).
+// First real module added in P1-T01.
+export {};

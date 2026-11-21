@@ -1,0 +1,22 @@
+# Build output
+dist/
+.astro/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Env
+.env
+.env.*
+!.env.example
