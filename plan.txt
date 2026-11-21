@@ -1,0 +1,304 @@
+PLAN  -  Cut List Calculator
+Version 1. Edit this file BEFORE changing scope. No code in this file.
+
+======================================================================
+1. SUMMARY
+======================================================================
+What: A free, no-login, browser-only website with separate tool pages that tell
+trades people and DIYers how much material to buy and show a drawn cutting
+layout. Calculations run in the browser. Nothing is uploaded.
+
+Brand / site name: Cut List Calculator   (GitHub repo name: cut-list-calculator)
+Reason: it is the plain phrase people type into Google. Names to avoid because
+they already exist as products: CutPlan, CutList Optimizer, OptiCutter,
+CutOptim, CutForgePro, TonCut, "Cut Calculator" (iOS app).
+Note: the name was checked only with a few web searches. Before launch, check the
+GitHub user/repo URL is free and do a quick trademark search.
+
+Users: adults aged about 30 to 60 (carpenters, builders, tailors, DIYers), mostly
+English-speaking, on phones, often outdoors or in bright workshops.
+Language: English only at launch. All strings in a translation file so another
+language can be added later (Spanish is the first candidate, decide after data).
+Units: metric and imperial. Default chosen from browser locale, visible toggle.
+
+Goals
+ G1 Fast, trustworthy answer: how much to buy and exactly how to cut it.
+ G2 Tool first, short pages, easy switching between tools.
+ G3 Very readable: big text, strong contrast, dark mode, big tap targets.
+ G4 Works offline after first visit.
+ G5 Professional look, consistent on every page (DESIGN.md).
+ G6 Free hosting on GitHub Pages.
+
+Non-goals (for now)
+ - No accounts, no server, no database, no ads, no paid features.
+ - No CNC/DXF export, no 3D, no inventory management.
+ - No promise of "zero waste". Results are an efficient layout, not guaranteed optimal.
+ - No languages other than English, no blog until a later phase.
+
+Market note: this space is crowded (web tools, iOS and Android apps, free and
+paid). Our edge is not "nobody does this". Our edge is: free with no daily limits,
+no login, readable by older eyes, phone-first, offline, honest about limits,
+guillotine-aware layouts, printable cut lists. Re-check competitors before Phase 2.
+
+======================================================================
+2. LOCKED DECISIONS
+======================================================================
+ D1 Stack: Astro (static output), TypeScript strict, plain CSS with tokens,
+    Vitest for tests, GitHub Actions deploy to GitHub Pages.
+ D2 One real HTML page per tool and per search intent. No single-page app.
+ D3 Pages are TOOL FIRST and SHORT. Long text lives in /help/, /about/, /guides/.
+ D4 "i  How to use" button next to the tool title jumps to #how-to on the same page.
+ D5 Footer carries small details: About ("Learn more"), Help, Guides, Privacy,
+    "Calculations run in your browser".
+ D6 Dark mode: follows device, header toggle, remembered, no flash.
+ D7 Readability standard: body 18 px, inputs 20 px, nothing under 14 px,
+    text contrast 7:1 or better in both themes, tap targets 48 px or larger.
+ D8 Header tool switcher lists only tools that are LIVE.
+ D9 Fonts: system font stack (nothing to download, works offline).
+ D10 Home page "/" is the flagship tool (Linear cutting). It is not a landing page.
+ D11 Phase order: 1 Linear (1D), 2 Plywood/sheet (2D), 3 Tiles, 4 Fabric.
+     Why: 1D is small and proves the whole pipeline; sheet goods is the biggest
+     audience and reuses 1D parts; tiles are simple maths; fabric has the most
+     special rules (nap, pattern) and a different audience.
+ D12 Output = print stylesheet (browser Print / Save as PDF) and a copy-link
+    share URL. No PDF library (keeps pages light).
+ D13 Heavy audits (Lighthouse) run in GitHub Actions, not on the dev laptop.
+
+======================================================================
+3. TOOL PAGE TEMPLATE (identical on every tool)
+======================================================================
+ Above the fold on a 360 x 640 phone: the tool starts.
+  1 Title + one-line promise + "i How to use" button
+  2 Inputs (stock, pieces, basic settings; advanced settings collapsed)
+  3 Calculate button
+  4 Results summary (stock used, waste %, unplaced)
+  5 Diagram
+  6 Cut list (numbered cuts)
+  7 Actions: Print, Copy link
+  8 "Verify before cutting" note beside the results
+ Below the tool (about 3 screens at most):
+  9 #how-to: numbered steps (150 to 250 words)
+ 10 Assumptions and limits (about 100 words) + up to 5 real FAQs
+ 11 Related tools, then footer
+ States every page must handle: empty (with "Try sample"), calculating,
+ success, partial (some pieces unplaced), error (plain words, says how to fix),
+ offline.
+
+======================================================================
+4. SITE MAP (URLs are lowercase, hyphenated; all under the repo base path)
+======================================================================
+ /                                  Linear cutting calculator (flagship)   Phase 1
+ /pipe-cutting-calculator/          same tool, pipe preset + own copy       Phase 1
+ /lumber-cutting-calculator/        same tool, lumber preset + own copy     Phase 1
+ /about/  /help/  /privacy/  /404.html                                    Phase 1
+ /plywood-cut-list-calculator/      sheet tool                              Phase 2
+ /tile-calculator/                  tile tool                               Phase 3
+ /fabric-yardage-calculator/        fabric tool                             Phase 4
+ /guides/ (blog-style articles)     Phase 5 (after tools have real use)
+ Presets must differ in more than the title: own defaults, own examples, own
+ intro line and own FAQ. No thin duplicates.
+
+======================================================================
+5. PHASES AND TASKS
+======================================================================
+Task format: ID | goal | acceptance check. One task = one agent session.
+Layers always go in this order: Foundations, Logic, UI, Output, Quality,
+Discovery, Launch. Never skip down the stack.
+
+----------------------------------------------------------------------
+PHASE 0  FOUNDATIONS
+----------------------------------------------------------------------
+P0-T01 [SONNET] | Create the repo, Astro project (static, TypeScript strict), npm scripts for
+        dev/test/build/preview, Vitest installed, .gitignore, .nojekyll.
+        Accept: npm run build and npm test both succeed on an empty project.
+P0-T02 [SONNET] | Commit AGENTS.md, plan.txt, progress.txt, DESIGN.md and .agent/skills.
+        Accept: a fresh clone contains them; AGENTS.md folder map matches reality.
+P0-T03 [SONNET] | Implement tokens.css and base.css exactly from DESIGN.md (both themes).
+        Accept: no hard-coded colours/sizes outside tokens.css; contrast table
+        from DESIGN.md re-verified and noted in progress.txt.
+P0-T04 [SONNET] | Base layout: html shell, head tags, no-flash theme script, skip link,
+        header (logo, tool switcher with one tool, theme toggle), footer.
+        Accept: keyboard order correct; theme toggle works and persists; looks
+        right at 360, 768, 1280 px in both themes.
+P0-T05 [SONNET] | Deploy pipeline: GitHub Actions (tests, build, deploy) with correct
+        base path; a placeholder home page goes live.
+        Accept: live URL loads with CSS, theme toggle works, no 404s in network panel.
+P0-T06 [SONNET] | Translation file and base-path helper in place; all visible text goes
+        through them.
+        Accept: no hard-coded visible strings in components.
+
+----------------------------------------------------------------------
+PHASE 1  LINEAR CUTTING (pipes, bars, lumber)   <- MVP
+----------------------------------------------------------------------
+Layer: core logic (pure modules, no DOM)
+P1-T01 [OPUS] | Units module: parse decimals and inch fractions (e.g. 3 1/2), convert
+        metric/imperial, integer internal units (0.1 mm / 1/64 in), format output.
+        Accept: round-trip tests pass; bad input returns a clear error.
+P1-T02 [OPUS] | Input validation: sizes > 0, kerf >= 0, piece longer than every stock
+        reported as "cannot fit", quantity limits.
+        Accept: every invalid case has a test and a plain-language message.
+P1-T03 [OPUS] | 1D algorithm: First Fit Decreasing and Best Fit Decreasing, keep the
+        better, kerf rule (clearly defined, optional kerf after last piece),
+        deterministic.
+        Accept: known-answer tests pass (see algorithm-testing skill).
+P1-T04 [OPUS] | Multiple stock lengths, limited stock quantities, reusable offcuts as extra stock.
+        Accept: tests for each; results never exceed available stock.
+P1-T05 [OPUS] | Results model: per-bar pieces in cut order, waste, totals, waste %,
+        unplaced list, plain-text cut list output.
+        Accept: invariant tests (no overlap, all pieces accounted, length conserved).
+P1-T06 [OPUS] | Test hardening: seeded fuzz tests, edge cases, 90% line coverage.
+        Accept: coverage target met; npm test green.
+
+Layer: UI
+P1-T07 [SONNET] | Tool page template (ToolLayout) with title block, "i How to use" button
+        and anchor target #how-to, below-tool sections in the fixed order.
+        Accept: tool starts inside the first screen at 360 x 640.
+P1-T08 [SONNET] | Stock + settings inputs: units toggle, stock length(s), kerf, advanced
+        collapsed. Labels, units, hints, error text per DESIGN.md.
+        Accept: keyboard-only use works; numeric keypad appears on phones.
+P1-T09 [SONNET] | Pieces row editor: length, quantity, add, duplicate, delete; keeps data
+        when editing; "Try sample" button.
+        Accept: works with 50+ rows without slowdown; empty state is helpful.
+P1-T10 [SONNET] | Calculate flow and results summary, partial and error states, polite
+        screen-reader announcement.
+        Accept: result appears in under 400 ms for typical jobs.
+P1-T11 [SONNET] | SVG diagram: scaled bars, numbered pieces, sizes, waste hatch, cut order,
+        title/description, scrolls inside its frame.
+        Accept: readable in black and white; table equivalent exists (P1-T12).
+P1-T12 [SONNET] | Cut list table (numbered cuts per bar) and "Verify before cutting" note.
+        Accept: matches the diagram exactly; note visible beside results.
+
+Layer: output
+P1-T13 [SONNET] | Print stylesheet (diagram + cut list + summary, no chrome).
+        Accept: prints on one A4/Letter page for a typical job, in black and white.
+P1-T14 [SONNET] | Copy-link share URL that restores inputs; Copy as text.
+        Accept: opening the link in a new browser reproduces the same result.
+
+Layer: quality
+P1-T15 [SONNET] | Accessibility pass per accessibility skill (keyboard, contrast in both
+        themes, 200% zoom, 320 px width, Lighthouse accessibility 95+ in CI).
+        Accept: results recorded in progress.txt.
+P1-T16 [SONNET] | Performance pass: JS under about 100 KB gzipped for the tool page,
+        no layout shift, first paint under 2 s on mid-range phone over 4G.
+        Accept: Lighthouse CI numbers recorded.
+P1-T17 [SONNET] | PWA offline: manifest, icons, service worker (versioned cache), update
+        notice, quiet install button.
+        Accept: offline reload of every page and a calculation works; update
+        test passes.
+
+Layer: discovery
+P1-T18 [SONNET] | About, Help (full how-to, FAQ, limits, kerf explained), Privacy, 404.
+        Footer "Learn more" link leads to About.
+        Accept: all linked from footer; no tool page text gets longer.
+P1-T19 [SONNET] | SEO basics: unique title and description, canonical, Open Graph, JSON-LD,
+        sitemap.xml, robots.txt, breadcrumbs.
+        Accept: validators show no errors; URLs respect the base path.
+P1-T20 [SONNET] | Preset pages: pipe and lumber (own defaults, copy, FAQ).
+        Accept: pages are clearly distinct and useful, not thin duplicates.
+
+Layer: launch
+P1-T21 [SONNET] | Deploy, smoke test on a real phone (home loads, calculation, offline,
+        dark mode, print), record in progress.txt.
+P1-T22 [SONNET] | Show to 5 to 10 real carpenters/tailors/DIYers; record feedback in
+        section 9 of this file; decide fixes before Phase 2.
+
+Definition of Done, Phase 1: all tasks accepted; algorithm tests green in CI;
+mobile layout checked at 360 px; accessibility checklist passed in both themes;
+SEO pages live; "Verify before cutting" present; deployed to GitHub Pages;
+feedback recorded.
+
+----------------------------------------------------------------------
+PHASE 2  SHEET GOODS (plywood, MDF)
+----------------------------------------------------------------------
+P2-T01 [OPUS] | Guillotine algorithm with split and choice rules, several combinations,
+        best kept; kerf at every split; edge trim option.
+P2-T02 [OPUS] | Grain and rotation per piece; offcuts above a minimum size reported.
+P2-T03 [OPUS] | Ordered cut sequence (rip then crosscut) output.
+P2-T04 [OPUS] | Tests: overlap, containment, conservation, guillotine-compatibility,
+        grain lock, fuzz, known answers.
+P2-T05 [SONNET] | UI: width x length rows, stock sheet size(s), grain toggle, advanced section;
+        same page template.
+P2-T06 [SONNET] | Sheet diagram with numbered cuts, offcuts, dimensions; print layout.
+P2-T07 [SONNET] | Page at /plywood-cut-list-calculator/, nav tab goes live, SEO, Help updates.
+P2-T08 [SONNET] | Accessibility, performance, offline re-check; deploy; feedback round.
+Definition of Done: same list as Phase 1 plus guillotine-compatible by default.
+Parked inside Phase 2: advanced "any-cut" (MaxRects) mode, only if feedback asks.
+
+----------------------------------------------------------------------
+PHASE 3  TILES
+----------------------------------------------------------------------
+P3-T01..: area, waste % (editable defaults), grout width, box rounding, straight
+and diagonal lay; simple layout diagram; tests; page; SEO; deploy; feedback.
+(Break into tasks when Phase 3 starts.)
+
+----------------------------------------------------------------------
+PHASE 4  FABRIC
+----------------------------------------------------------------------
+P4-T01..: fixed roll width strip packing, nap/pattern direction, seam allowance,
+yardage and metres output; tests; page; SEO; deploy; feedback.
+(Break into tasks when Phase 4 starts.)
+
+----------------------------------------------------------------------
+PHASE 5  GUIDES AND GROWTH
+----------------------------------------------------------------------
+Guides/blog section with real, accurate articles linked from tool pages;
+Search Console; improve pages from feedback. Before any ads: privacy policy and
+consent handling must be reviewed first.
+
+======================================================================
+6. RISKS
+======================================================================
+ R1 Wrong layout costs real money -> tests in CI block deploys; "Verify before cutting".
+ R2 Crowded market -> compete on readability, no limits, offline, honest limits.
+ R3 Scope creep -> only the current phase is built; ideas go to the Parking Lot.
+ R4 Slow SEO -> target long-tail pages first; expect months, not weeks.
+ R5 Agent loses context -> AGENTS.md + progress.txt + commit per task.
+ R6 Low-spec dev laptop -> few dependencies, heavy audits in CI.
+ R7 Name or trademark clash -> check before launch (section 1 note).
+
+======================================================================
+7. PARKING LOT (do not build yet)
+======================================================================
+ - Saved projects, accounts, branded quotes, bulk export (paid ideas)
+ - MaxRects "any-cut" mode
+ - Spanish (or other) translation
+ - Self-hosted reading font (for example Atkinson Hyperlegible)
+ - Custom domain
+ - Cost/price estimate fields
+ - Drywall, glass, metal sheet presets
+
+======================================================================
+8. SEO PAGE TABLE (fill as pages are built)
+======================================================================
+ Page | Target search | Status
+ /                              | linear cutting list calculator  | not started
+ /pipe-cutting-calculator/      | pipe cutting length calculator  | not started
+ /lumber-cutting-calculator/    | lumber cut list calculator      | not started
+ /plywood-cut-list-calculator/  | plywood cut list calculator     | Phase 2
+
+======================================================================
+9. FEEDBACK LOG (Phase 1 user testing)
+======================================================================
+ (empty)
+
+======================================================================
+10. OPEN QUESTIONS
+======================================================================
+ Q1 GitHub username and final repo URL (decides the base path).
+ Q2 Contact email or form for the About page.
+ Q3 Home page becomes a tool hub later, or stays the Linear tool? (decide at Phase 3)
+
+======================================================================
+11. MODEL SWITCHING (Antigravity cannot switch models by itself)
+======================================================================
+ Every task above carries a tag: [OPUS] for Opus 4.6, [SONNET] for Sonnet 4.6.
+ OPUS = algorithm and logic work (P1-T01..T06, P2-T01..T04) and big plan changes.
+ SONNET = everything else (setup, UI, styling, content, deploy, quality).
+ Tasks are grouped so the model changes only a few times per phase:
+   Phase 0 all Sonnet -> P1-T01..T06 Opus -> P1-T07 onward Sonnet -> P2-T01..T04 Opus -> rest Sonnet.
+ Protocol: the owner states the active model in the first message of a session
+ (see AGENTS.md). Before starting a task, the agent compares it with the task tag.
+ If they differ, the agent does not start the task: it writes NEXT MODEL in
+ progress.txt, commits, and tells the owner "Switch to <model>, then send the start prompt."
+ If a [SONNET] task turns out to need hard algorithm design, the agent stops and
+ asks the owner to switch to Opus instead of guessing.
