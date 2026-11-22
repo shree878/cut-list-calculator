@@ -1,10 +1,19 @@
 LAST UPDATED: 2026-11-22
 PHASE: 1 Linear Cutting Calculator
-CURRENT TASK: P1-T03   STATUS: DONE
+CURRENT TASK: P1-T04   STATUS: DONE
 MODEL NEEDED NOW: OPUS     NEXT MODEL CHANGE: SONNET at P1-T07
-NEXT ACTION: P1-T04 (OPUS) - multiple stock lengths, limited quantities, offcuts as stock. Read the P1-T04 notes in TASK NOTES at the end of plan.txt first. Extend src/algorithms/linear1d.ts, do not rewrite it.
+NEXT ACTION: P1-T05 (OPUS) - Results model: per-bar pieces in cut order, waste, totals, waste %, unplaced list, plain-text cut list output. Read TASK NOTES for P1-T05 in plan.txt first.
 
 DONE (newest first, one line each):
+- P1-T04: Multi-stock support (src/algorithms/linear1d.ts). solveLinear1DMultiStock
+  accepts [{length, quantity}] stocks (Infinity=unlimited). Picks shortest
+  stock that fits. Limited quantities enforced (exhausted → next stock or
+  unplaced). Offcuts modelled as limited-qty stock entries. Duplicate stock
+  entries merged. pickBetter tie-break: fewer bars → less waste → largest
+  single leftover → BFD. solveLinear1D kept as thin wrapper. 19 new tests
+  (known-answer, invariant, determinism), all expected values hand-verified
+  with arithmetic in comments. Stock quantity invariant checked in every
+  multi-stock test. npm test ✓ (174), npm run build ✓.
 - P1-T03: 1D linear cutting algorithm (src/algorithms/linear1d.ts). FFD + BFD,
   keeps better result. Kerf rule: n−1 cuts default, n cuts if kerfAfterLast=true.
   Deterministic, pure TS. 25 known-answer + invariant + edge-case tests, all
@@ -38,7 +47,7 @@ IN PROGRESS / PARTIAL:
 - (nothing)
 
 TODO (next tasks):
-- P1-T04..T06 (OPUS model)
+- P1-T05..T06 (OPUS model)
 - P1-T07 onward (SONNET model — switch before starting)
 
 DECISIONS:

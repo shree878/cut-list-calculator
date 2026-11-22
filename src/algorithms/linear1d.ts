@@ -11,7 +11,12 @@
  *   kerfAfterLast = true:             consumed = sum(lengths) + kerf × n
  *
  * Strategy: expand pieces by quantity, sort descending, run FFD and BFD,
- * keep the result with fewer bars; on tie, less total waste; on tie, BFD.
+ * keep the result with fewer bars; on tie, less total waste; on tie, prefer
+ * the layout with the largest single leftover piece (more reusable); on tie,
+ * prefer BFD.
+ *
+ * Supports multiple stock lengths with limited quantities.  Offcuts are
+ * modelled as extra stock entries with limited quantity.
  */
 
 // ---------------------------------------------------------------------------
@@ -23,6 +28,14 @@ export interface LinearPiece {
   length: number;
   /** Index into the original pieces array (for linking results back). */
   sourceIndex: number;
+}
+
+/** A stock entry with length and available quantity. */
+export interface StockItem {
+  /** Length in internal integer units (> 0). */
+  length: number;
+  /** Available quantity. Use Infinity for unlimited. */
+  quantity: number;
 }
 
 /** One stock bar in the result, with its cut list. */
@@ -56,7 +69,8 @@ export interface LinearResult {
 // ---------------------------------------------------------------------------
 
 /**
- * Solve a 1D linear cutting problem with a single stock length.
+ * Solve a 1D linear cutting problem with a single stock length (unlimited).
+ * Thin wrapper around solveLinear1DMultiStock that preserves the original API.
  *
  * @param stockLength  Length of each stock bar (internal integer units, > 0).
  * @param pieces       Piece requests (each with length > 0, quantity >= 1).
@@ -70,9 +84,38 @@ export function solveLinear1D(
   kerf: number,
   kerfAfterLast = false,
 ): LinearResult {
+  return solveLinear1DMultiStock(
+    [{ length: stockLength, quantity: Infinity }],
+    pieces,
+    kerf,
+    kerfAfterLast,
+  );
+}
+
+/**
+ * Solve a 1D linear cutting problem with multiple stock lengths and limited
+ * quantities.  Reusable offcuts are modelled as extra stock entries with
+ * limited quantity.
+ *
+ * @param stocks        Stock entries sorted by length ascending (shortest
+ *                      first) is recommended but not required; the algorithm
+ *                      always picks the shortest stock that fits.
+ * @param pieces        Piece requests (each with length > 0, quantity >= 1).
+ * @param kerf          Blade kerf width in internal units (>= 0).
+ * @param kerfAfterLast If true, add one extra kerf after the last piece on
+ *                      each bar.  Defaults to false.
+ */
+export function solveLinear1DMultiStock(
+  stocks: ReadonlyArray<StockItem>,
+  pieces: ReadonlyArray<{ length: number; quantity: number }>,
+  kerf: number,
+  kerfAfterLast = false,
+): LinearResult {
+  // Normalize: merge duplicate lengths (sum quantities), sort ascending.
+  const merged = mergeStocks(stocks);
   const expanded = expandAndSort(pieces);
-  const ffd = runHeuristic('ffd', expanded, stockLength, kerf, kerfAfterLast);
-  const bfd = runHeuristic('bfd', expanded, stockLength, kerf, kerfAfterLast);
+  const ffd = runHeuristic('ffd', expanded, merged, kerf, kerfAfterLast);
+  const bfd = runHeuristic('bfd', expanded, merged, kerf, kerfAfterLast);
   return pickBetter(ffd, bfd);
 }
 
@@ -86,6 +129,31 @@ interface OpenBar {
   sumLengths: number;
   /** Space remaining on this bar. */
   remaining: number;
+  /** The stock length this bar was opened from. */
+  stockLength: number;
+}
+
+/** Normalized stock entry (sorted ascending, unique lengths, mutable qty). */
+interface MutableStock {
+  length: number;
+  remaining: number;
+}
+
+/** Merge duplicate stock lengths and sort ascending. */
+function mergeStocks(stocks: ReadonlyArray<StockItem>): MutableStock[] {
+  const map = new Map<number, number>();
+  for (const s of stocks) {
+    const prev = map.get(s.length) ?? 0;
+    // Infinity + anything = Infinity, which is correct.
+    map.set(s.length, prev + s.quantity);
+  }
+  const out: MutableStock[] = [];
+  for (const [length, remaining] of map) {
+    out.push({ length, remaining });
+  }
+  // Sort ascending by length so we always pick the shortest that fits.
+  out.sort((a, b) => a.length - b.length);
+  return out;
 }
 
 /** Expand piece requests into individual pieces, sort descending by length. */
@@ -113,21 +181,16 @@ function expandAndSort(
 function runHeuristic(
   mode: 'ffd' | 'bfd',
   sorted: LinearPiece[],
-  stockLength: number,
+  stocks: MutableStock[],
   kerf: number,
   kerfAfterLast: boolean,
 ): LinearResult {
+  // Deep-copy stocks so we can mutate remaining counts.
+  const avail: MutableStock[] = stocks.map((s) => ({ ...s }));
   const bars: OpenBar[] = [];
   const unplaced: LinearPiece[] = [];
 
   for (const piece of sorted) {
-    // Cost to open a fresh bar with this piece.
-    const freshCost = kerfAfterLast ? piece.length + kerf : piece.length;
-    if (freshCost > stockLength) {
-      unplaced.push(piece);
-      continue;
-    }
-
     // Cost to add this piece to an existing bar (always kerf + length,
     // because every existing bar already has at least one piece).
     const addCost = kerf + piece.length;
@@ -157,21 +220,35 @@ function runHeuristic(
       bars[bestIdx].sumLengths += piece.length;
       bars[bestIdx].remaining -= addCost;
     } else {
-      bars.push({
-        pieces: [piece],
-        sumLengths: piece.length,
-        remaining: stockLength - freshCost,
-      });
+      // Need a new bar — pick the SHORTEST available stock that holds the piece.
+      const freshCost = kerfAfterLast ? piece.length + kerf : piece.length;
+      let opened = false;
+      for (const stock of avail) {
+        if (stock.remaining <= 0) continue;
+        if (freshCost <= stock.length) {
+          stock.remaining--;
+          bars.push({
+            pieces: [piece],
+            sumLengths: piece.length,
+            remaining: stock.length - freshCost,
+            stockLength: stock.length,
+          });
+          opened = true;
+          break;
+        }
+      }
+      if (!opened) {
+        unplaced.push(piece);
+      }
     }
   }
 
-  return buildResult(bars, stockLength, kerf, kerfAfterLast, unplaced);
+  return buildResult(bars, kerf, kerfAfterLast, unplaced);
 }
 
 /** Convert open bars into the public result type. */
 function buildResult(
   bars: OpenBar[],
-  stockLength: number,
   kerf: number,
   kerfAfterLast: boolean,
   unplaced: LinearPiece[],
@@ -180,9 +257,9 @@ function buildResult(
     const n = bar.pieces.length;
     const kerfCount = kerfAfterLast ? n : Math.max(0, n - 1);
     const kerfTotal = kerfCount * kerf;
-    const waste = stockLength - bar.sumLengths - kerfTotal;
+    const waste = bar.stockLength - bar.sumLengths - kerfTotal;
     return {
-      stockLength,
+      stockLength: bar.stockLength,
       pieces: [...bar.pieces],
       usedLength: bar.sumLengths,
       kerfTotal,
@@ -190,7 +267,7 @@ function buildResult(
     };
   });
 
-  const totalStock = resultBars.length * stockLength;
+  const totalStock = resultBars.reduce((s, b) => s + b.stockLength, 0);
   const totalWaste = resultBars.reduce((s, b) => s + b.waste, 0);
 
   return {
@@ -204,7 +281,8 @@ function buildResult(
 
 /**
  * Pick the better of two results.
- * Fewer bars wins; on tie, less waste; on tie, prefer the second (BFD).
+ * Fewer bars wins; on tie, less waste; on tie, largest single leftover
+ * (most reusable offcut); on tie, prefer the second (BFD).
  */
 function pickBetter(a: LinearResult, b: LinearResult): LinearResult {
   if (a.bars.length !== b.bars.length) {
@@ -212,6 +290,12 @@ function pickBetter(a: LinearResult, b: LinearResult): LinearResult {
   }
   if (a.totalWaste !== b.totalWaste) {
     return a.totalWaste < b.totalWaste ? a : b;
+  }
+  // Largest single leftover (bar.waste) — higher is better (more reusable).
+  const maxLeftA = a.bars.reduce((m, bar) => Math.max(m, bar.waste), 0);
+  const maxLeftB = b.bars.reduce((m, bar) => Math.max(m, bar.waste), 0);
+  if (maxLeftA !== maxLeftB) {
+    return maxLeftA > maxLeftB ? a : b;
   }
   return b;
 }
