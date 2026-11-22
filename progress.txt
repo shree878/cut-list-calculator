@@ -1,11 +1,16 @@
 LAST UPDATED: 2026-11-22
 PHASE: 1 Linear Cutting Calculator
-CURRENT TASK: P1-T02   STATUS: DONE
+CURRENT TASK: P1-T03   STATUS: DONE
 MODEL NEEDED NOW: OPUS     NEXT MODEL CHANGE: SONNET at P1-T07
-NEXT ACTION: P1-T03 — 1D algorithm: First Fit Decreasing and Best Fit Decreasing,
-keep the better result, kerf rule, deterministic output.
+NEXT ACTION: P1-T04 — ToolLayout component and linear calculator page shell
+  (read plan.txt P1-T04, then ux-information-architecture + astro-static-site skills).
 
 DONE (newest first, one line each):
+- P1-T03: 1D linear cutting algorithm (src/algorithms/linear1d.ts). FFD + BFD,
+  keeps better result. Kerf rule: n−1 cuts default, n cuts if kerfAfterLast=true.
+  Deterministic, pure TS. 25 known-answer + invariant + edge-case tests, all
+  expected values hand-verified with arithmetic in comments. npm test ✓ (155),
+  npm run build ✓.
 - P1-T02: Input validation module (src/algorithms/validate.ts). Stock > 0,
   kerf >= 0, piece > 0, quantities >= 1, total pieces <= 500, fit check (piece
   longer than every stock → "cannot fit"). 43 tests, all invalid cases covered
@@ -34,7 +39,7 @@ IN PROGRESS / PARTIAL:
 - (nothing)
 
 TODO (next tasks):
-- P1-T02..T06 (OPUS model)
+- P1-T04..T06 (OPUS model)
 - P1-T07 onward (SONNET model — switch before starting)
 
 DECISIONS:
