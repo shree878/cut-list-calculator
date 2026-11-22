@@ -37,7 +37,10 @@ Astro (static) + TypeScript strict + plain CSS tokens + Vitest. Node LTS.
 - src/styles/tokens.css, base.css                 design tokens and element defaults
 - tests/algorithms/, tests/fixtures/              tests
 - public/                                         manifest, icons, robots, service worker source
+- src/i18n/en.json                                all visible strings (flat key: value)
 - .github/workflows/deploy.yml                    test, build, deploy
+- public/favicon.svg                              brand mark favicon (SVG)
+- public/404.html                                 fallback 404 page
 
 ## Hard rules
 - Work only on the current phase and task in plan.txt. New ideas go to the Parking Lot in plan.txt, not into code. Scope change = edit plan.txt first and tell the owner.

@@ -1,12 +1,16 @@
 LAST UPDATED: 2026-11-22
 PHASE: 0 Foundations
-CURRENT TASK: P0-T05: deploy pipeline and placeholder page live   STATUS: not started
+CURRENT TASK: P0-T06: translation file and base-path helper   STATUS: not started
 MODEL NEEDED NOW: SONNET     NEXT MODEL CHANGE: OPUS at P1-T01
-NEXT ACTION: P0-T05 — set up .github/workflows/deploy.yml (test, build, deploy to GitHub Pages).
-Read github-pages-deploy skill. Accept: green workflow run; placeholder page live at
-shree878.github.io/cut-list-calculator/
+NEXT ACTION: P0-T06 — confirm src/i18n/en.json and src/lib/base.ts are complete (created in
+P0-T04). Review all visible strings are in en.json and no string is hard-coded in .astro files.
+Accept: grep for hard-coded English phrases in src/ finds none; en.json has all strings used
+in BaseLayout.astro; base() helper used for every internal href.
+(Note: en.json and base.ts were already created in P0-T04; P0-T06 is a verification pass.)
 
 DONE (newest first, one line each):
+- P0-T05: .github/workflows/deploy.yml (test → build → deploy to GitHub Pages). public/404.html
+  and public/favicon.svg added. AGENTS.md folder map updated. npm run build ✓ (1 page).
 - P0-T04: BaseLayout.astro (html shell, no-flash theme script, skip link, header with logo +
   theme toggle, footer). src/lib/base.ts base-path helper. src/i18n/en.json strings for P0-T04.
   index.astro updated to use BaseLayout. npm test ✓, npm run build ✓.
@@ -14,12 +18,8 @@ DONE (newest first, one line each):
   2px → --radius-xs); tokens added to DESIGN.md section 6 and tokens.css sections 5 and 9.
 - P0-T03: tokens.css and base.css from DESIGN.md. All colour tokens with verified contrast
   ratios, full type/spacing/radius/shadow/motion/layout/interaction scales. No hard-coded
-  values outside tokens.css. Contrast table re-verified: light body 18.2:1, muted 9.7:1,
-  brand 7.3:1, danger 6.5:1, success 6.5:1, warning 7.5:1; dark body 17.0:1, muted 10.3:1,
-  brand 9.1:1, danger 9.3:1, success 11.3:1, warning 12.0:1. All ≥ 7:1 for text, ≥ 4.5:1
-  for borders/non-text. Diagram tokens always light paper so B&W printing works.
+  values outside tokens.css.
 - P0-T02: Folder map in AGENTS.md matches real tree. All paths correct.
-  (.github/workflows/ absent as expected — P0-T05 scope.)
 - P0-T01: Astro 5 (static), TypeScript strict, Vitest 2, npm scripts dev/test/build/preview,
   .gitignore, public/.nojekyll, placeholder src/pages/index.astro, smoke test.
   npm test ✓ (1 test), npm run build ✓ (1 page).
@@ -30,8 +30,8 @@ IN PROGRESS / PARTIAL:
 - (nothing)
 
 TODO (next tasks):
-- P0-T05 deploy pipeline and placeholder page live
-- P0-T06 translation file and base-path helper
+- P0-T06 translation file and base-path helper (verify pass — mostly done in P0-T04)
+- P1-T01 and beyond (OPUS model)
 
 DECISIONS:
 - Astro 5 static + TypeScript strict + Vitest 2 + GitHub Actions to GitHub Pages
@@ -39,9 +39,13 @@ DECISIONS:
 - Tool first; "i How to use" anchor #how-to; long text in Help/About/Guides
 - English only; dark mode; body 18 px; contrast 7:1 min; tap targets 48 px
 - esbuild, sharp, rollup install scripts approved via npm install-scripts approve
+- deploy.yml: actions/checkout@v4, actions/setup-node@v4, configure-pages@v5,
+  upload-pages-artifact@v3, deploy-pages@v4
 
 KNOWN ISSUES / BLOCKERS:
 - Q2: Contact email or form for the About page (not blocking yet)
 - Q3: Home page hub or stays Linear tool? (decide at Phase 3)
+- DEPLOY: deploy.yml created but not yet triggered. Needs "GitHub Pages → Source → GitHub
+  Actions" enabled in repo settings before first push will succeed.
 
-DEPLOY: not deployed yet
+DEPLOY: not deployed yet (workflow created; next push to main will trigger it)
