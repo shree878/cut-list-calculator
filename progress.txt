@@ -1,11 +1,17 @@
 LAST UPDATED: 2026-11-22
 PHASE: 0 Foundations
-CURRENT TASK: P0-T06: translation file and base-path helper   STATUS: DONE
+CURRENT TASK: P0-fix   STATUS: DONE
 MODEL NEEDED NOW: SONNET     NEXT MODEL CHANGE: OPUS at P1-T01
 NEXT ACTION: P1-T01 — Switch to OPUS first. Units module: parse decimals and inch
 fractions, convert metric/imperial, integer internal units, format output.
 
 DONE (newest first, one line each):
+- P0-fix: Theme toggle: removed Auto option (Light + Dark only). First visit still
+  follows prefers-color-scheme with no flash; clicking saves choice to localStorage.
+  Footer: removed Guides link (page does not exist until Phase 5; kept About, Help,
+  Privacy). Updated DESIGN.md sections 3, 8 (components 1 and 14). Removed
+  nav.themeAuto and footer.guides from en.json. npm test ✓, npm run build ✓.
+- P0-T05: live site verified at https://shree878.github.io/cut-list-calculator/ — DONE.
 - P0-T06: Verification pass — en.json and base.ts confirmed complete. Fixed 3
   hard-coded strings: index.astro h1 and p now use t['index.heading'] and
   t['index.comingSoon']; BaseLayout.astro footer nav aria-label now uses
@@ -15,7 +21,6 @@ DONE (newest first, one line each):
 - P0-T05: .github/workflows/deploy.yml (test → build → deploy to GitHub Pages).
   public/404.html and public/favicon.svg added. AGENTS.md folder map updated.
   npm run build ✓ (1 page).
-  STATUS: written, live check pending (live URL not yet tested).
 - P0-T04: BaseLayout.astro (html shell, no-flash theme script, skip link, header
   with logo + theme toggle, footer). src/lib/base.ts base-path helper.
   src/i18n/en.json strings for P0-T04. index.astro updated to use BaseLayout.
@@ -48,13 +53,12 @@ DECISIONS:
 - esbuild, sharp, rollup install scripts approved via npm install-scripts approve
 - deploy.yml: actions/checkout@v4, actions/setup-node@v4, configure-pages@v5,
   upload-pages-artifact@v3, deploy-pages@v4
+- Theme toggle: Light + Dark only (no Auto button). First visit uses OS pref silently.
 
 KNOWN ISSUES / BLOCKERS:
 - Q2: Contact email or form for the About page (not blocking yet)
 - Q3: Home page hub or stays Linear tool? (decide at Phase 3)
-- DEPLOY: deploy.yml created but not yet triggered. Needs "GitHub Pages → Source →
-  GitHub Actions" enabled in repo settings before first push will succeed.
 
 NEXT MODEL: OPUS (needed for P1-T01 onward — switch before starting P1-T01)
 
-DEPLOY: not deployed yet (workflow created; next push to main will trigger it)
+DEPLOY: live at https://shree878.github.io/cut-list-calculator/ (verified 2026-11-22)

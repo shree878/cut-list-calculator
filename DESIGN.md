@@ -46,8 +46,9 @@ Rules: re-check contrast whenever a colour token changes. Body and label text mu
 Alert backgrounds use --color-surface with a 4 px left border in the semantic colour plus an icon and text (never colour alone).
 
 ## 3. Theme behaviour
-- Default follows `prefers-color-scheme`. Header toggle (Light / Dark / Auto) overrides and is saved on the device.
-- An inline script in `<head>` sets `data-theme` before first paint so there is no flash.
+- First visit follows `prefers-color-scheme` with no flash (inline `<head>` script sets `data-theme` before paint).
+- Header toggle has two options: **Light** and **Dark**. Clicking either saves the choice to `localStorage`; the saved choice wins on future visits.
+- If nothing is saved (first visit), the OS preference is used silently — there is no "Auto" button.
 - Tokens are defined on `:root` and redefined on `:root[data-theme="dark"]`.
 
 ## 4. Diagram colours (the "drawing sheet")
@@ -96,7 +97,7 @@ Name: Cut List Calculator. Logo: wordmark only in --color-text, with a small squ
 - No hover-only features. Help text opens on tap.
 
 ## 8. Components (each has default, hover, focus, active, disabled, error states)
-1. Header: logo left, tool switcher (tabs, live tools only), theme toggle right. Skip link first. Same on every page.
+1. Header: logo left, tool switcher (tabs, live tools only), theme toggle (Light / Dark) right. Skip link first. Same on every page.
 2. Tool switcher: horizontal tabs, scrolls sideways on phones, current tool marked with text weight plus underline.
 3. Page title block: h1, one-line promise, "i  How to use" button (anchor to #how-to).
 4. Button: primary (filled brand), secondary (border), ghost (text). Label says the action.
@@ -109,7 +110,7 @@ Name: Cut List Calculator. Logo: wordmark only in --color-text, with a small squ
 11. Table (cut list): numbered cuts, readable on phone, no tiny text.
 12. Alert: info, warning, error, success. The "Verify before cutting" note is a permanent warning alert next to the results.
 13. How-to block (#how-to): numbered steps, short.
-14. Footer: small links (About, Help, Guides, Privacy), a "Learn more about this site" link to About, "Calculations run in your browser. Nothing is uploaded." Text stays at --text-small or larger.
+14. Footer: small links (About, Help, Privacy), a "Learn more about this site" link to About, "Calculations run in your browser. Nothing is uploaded." Text stays at --text-small or larger.
 15. Related-tools row: simple text links with one line each.
 
 ## 9. Copy style

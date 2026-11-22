@@ -91,7 +91,7 @@ const {
           </ul>
         </nav>
 
-        <!-- Theme toggle: Light / Dark / Auto -->
+        <!-- Theme toggle: Light / Dark -->
         <div class="theme-toggle" role="group" aria-label={t['nav.themeLabel']}>
           <button
             class="theme-btn"
@@ -124,19 +124,6 @@ const {
             </svg>
             <span>{t['nav.themeDark']}</span>
           </button>
-
-          <button
-            class="theme-btn"
-            data-theme-value="auto"
-            aria-pressed="false"
-            type="button"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M12 2a10 10 0 0 1 0 20V2z" fill="currentColor" stroke="none"/>
-            </svg>
-            <span>{t['nav.themeAuto']}</span>
-          </button>
         </div>
 
       </div>
@@ -154,7 +141,6 @@ const {
           <ul class="footer-nav__list" role="list">
             <li><a href={base('/about')}>{t['footer.about']}</a></li>
             <li><a href={base('/help')}>{t['footer.help']}</a></li>
-            <li><a href={base('/guides')}>{t['footer.guides']}</a></li>
             <li><a href={base('/privacy')}>{t['footer.privacy']}</a></li>
           </ul>
         </nav>
@@ -179,11 +165,7 @@ const {
         }
 
         function applyTheme(value: string): void {
-          var resolved = value === 'auto'
-            ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-            : value;
-          document.documentElement.setAttribute('data-theme', resolved);
-          // Store 'auto' so we re-resolve on next visit; store 'light'/'dark' as explicit.
+          document.documentElement.setAttribute('data-theme', value);
           setStored(value);
           // Update aria-pressed on all buttons
           document.querySelectorAll<HTMLButtonElement>('.theme-btn').forEach(function (btn) {
@@ -191,25 +173,35 @@ const {
           });
         }
 
-        // Initial state: determine what preference is active
-        var currentPref: string = getStored() ?? 'auto';
-        // 'auto' means nothing was stored (first visit) — keep auto
-        if (currentPref !== 'light' && currentPref !== 'dark') {
-          currentPref = 'auto';
+        // Initial state: use stored preference, or resolve OS preference (but don't store it)
+        var stored = getStored();
+        var currentTheme: string;
+        if (stored === 'light' || stored === 'dark') {
+          currentTheme = stored;
+        } else {
+          // First visit: follow OS, don't save — pressing a button will save the first explicit choice
+          currentTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         }
-        applyTheme(currentPref);
+        // Set aria-pressed to reflect actual current theme (without saving if first visit)
+        document.querySelectorAll<HTMLButtonElement>('.theme-btn').forEach(function (btn) {
+          btn.setAttribute('aria-pressed', String(btn.dataset.themeValue === currentTheme));
+        });
 
-        // Wire up buttons
+        // Wire up buttons: clicking Light or Dark saves and applies
         document.querySelectorAll<HTMLButtonElement>('.theme-btn').forEach(function (btn) {
           btn.addEventListener('click', function () {
-            applyTheme(btn.dataset.themeValue ?? 'auto');
+            applyTheme(btn.dataset.themeValue ?? 'light');
           });
         });
 
-        // Follow OS preference when set to auto
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
-          if ((getStored() ?? 'auto') === 'auto') {
-            applyTheme('auto');
+        // Follow OS preference when no choice is saved
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+          if (!getStored()) {
+            var next = e.matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', next);
+            document.querySelectorAll<HTMLButtonElement>('.theme-btn').forEach(function (btn) {
+              btn.setAttribute('aria-pressed', String(btn.dataset.themeValue === next));
+            });
           }
         });
       })();
