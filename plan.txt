@@ -302,3 +302,10 @@ consent handling must be reviewed first.
  progress.txt, commits, and tells the owner "Switch to <model>, then send the start prompt."
  If a [SONNET] task turns out to need hard algorithm design, the agent stops and
  asks the owner to switch to Opus instead of guessing.
+
+======================================================================
+TASK NOTES (read the note for your current task before starting it)
+======================================================================
+P1-T08 note: keep the text the user typed and convert from that when the units toggle changes; never convert the displayed value repeatedly (rounding drifts).
+P1-T10 note: validate.ts returns hard-coded English with internal units. Change it to return a stable error code (for example PIECE_TOO_LONG, KERF_NEGATIVE) plus the offending row and values. The UI builds the text from en.json using unit-formatted values via units.ts, never internal units.
+P1-T18 note: delete public/404.html and use src/pages/404.astro instead.
