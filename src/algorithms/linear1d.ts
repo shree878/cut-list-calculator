@@ -11,9 +11,8 @@
  *   kerfAfterLast = true:             consumed = sum(lengths) + kerf × n
  *
  * Strategy: expand pieces by quantity, sort descending, run FFD and BFD,
- * keep the result with fewer bars; on tie, less total waste; on tie, prefer
- * the layout with the largest single leftover piece (more reusable); on tie,
- * prefer BFD.
+ * keep the better result. pickBetter order: fewer unplaced → less total
+ * stock material → fewer bars → largest single leftover → prefer BFD.
  *
  * Supports multiple stock lengths with limited quantities.  Offcuts are
  * modelled as extra stock entries with limited quantity.
@@ -281,21 +280,39 @@ function buildResult(
 
 /**
  * Pick the better of two results.
- * Fewer bars wins; on tie, less waste; on tie, largest single leftover
- * (most reusable offcut); on tie, prefer the second (BFD).
+ *
+ * Comparison order (first difference wins):
+ *  1. Fewer unplaced pieces.
+ *  2. Smaller total stock material used = sum of bar.stockLength across all bars.
+ *  3. Fewer bars.
+ *  4. Largest single leftover (max bar.waste) — higher is more reusable.
+ *  5. Prefer the second argument (BFD) on a full tie.
+ *
+ * Note: total-waste is NOT compared separately; once unplaced count and total
+ * stock material are equal, all placed material must also be equal, so total
+ * waste is redundant.
  */
-function pickBetter(a: LinearResult, b: LinearResult): LinearResult {
+export function pickBetter(a: LinearResult, b: LinearResult): LinearResult {
+  // 1. Fewer unplaced pieces wins.
+  if (a.unplaced.length !== b.unplaced.length) {
+    return a.unplaced.length < b.unplaced.length ? a : b;
+  }
+  // 2. Less total stock material used (sum of bar.stockLength) wins.
+  const stockA = a.bars.reduce((s, bar) => s + bar.stockLength, 0);
+  const stockB = b.bars.reduce((s, bar) => s + bar.stockLength, 0);
+  if (stockA !== stockB) {
+    return stockA < stockB ? a : b;
+  }
+  // 3. Fewer bars wins.
   if (a.bars.length !== b.bars.length) {
     return a.bars.length < b.bars.length ? a : b;
   }
-  if (a.totalWaste !== b.totalWaste) {
-    return a.totalWaste < b.totalWaste ? a : b;
-  }
-  // Largest single leftover (bar.waste) — higher is better (more reusable).
+  // 4. Largest single leftover (bar.waste) — higher is better (more reusable).
   const maxLeftA = a.bars.reduce((m, bar) => Math.max(m, bar.waste), 0);
   const maxLeftB = b.bars.reduce((m, bar) => Math.max(m, bar.waste), 0);
   if (maxLeftA !== maxLeftB) {
     return maxLeftA > maxLeftB ? a : b;
   }
+  // 5. Full tie — prefer BFD (second argument).
   return b;
 }

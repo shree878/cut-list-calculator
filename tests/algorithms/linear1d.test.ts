@@ -2,7 +2,9 @@ import { describe, it, expect } from 'vitest';
 import {
   solveLinear1D,
   solveLinear1DMultiStock,
+  pickBetter,
   type LinearResult,
+  type BarResult,
   type StockItem,
 } from '../../src/algorithms/linear1d';
 
@@ -890,5 +892,86 @@ describe('solveLinear1DMultiStock — pickBetter tie-break', () => {
       );
       expect(r1.bars[i].stockLength).toBe(r2.bars[i].stockLength);
     }
+  });
+});
+
+// ===========================================================================
+// P1-T04 fix: pickBetter — hand-built LinearResult unit tests
+// ===========================================================================
+
+/** Build a minimal BarResult for use in pickBetter tests. */
+function makeBar(stockLength: number, pieces: number[], kerf = 0, kerfAfterLast = false): BarResult {
+  const usedLength = pieces.reduce((s, p) => s + p, 0);
+  const n = pieces.length;
+  const kerfCount = kerfAfterLast ? n : Math.max(0, n - 1);
+  const kerfTotal = kerfCount * kerf;
+  const waste = stockLength - usedLength - kerfTotal;
+  return {
+    stockLength,
+    pieces: pieces.map((length, i) => ({ length, sourceIndex: i })),
+    usedLength,
+    kerfTotal,
+    waste,
+  };
+}
+
+/** Build a minimal LinearResult for use in pickBetter tests. */
+function makeResult(bars: BarResult[], unplaced: number[] = []): LinearResult {
+  const totalWaste = bars.reduce((s, b) => s + b.waste, 0);
+  const totalStock = bars.reduce((s, b) => s + b.stockLength, 0);
+  return {
+    bars,
+    totalStockUsed: bars.length,
+    totalWaste,
+    wastePercent: totalStock > 0 ? (totalWaste / totalStock) * 100 : 0,
+    unplaced: unplaced.map((length, i) => ({ length, sourceIndex: i })),
+  };
+}
+
+describe('pickBetter — hand-built unit tests', () => {
+  it('(a) fewer unplaced pieces wins, even with more bars', () => {
+    // A: 1 unplaced piece, 1 bar of stockLength=10000 holding [9000], waste=1000
+    //    total stock = 10000
+    // B: 0 unplaced pieces, 2 bars each stockLength=10000 holding [4000], waste=6000
+    //    total stock = 20000
+    // Rule 1: B.unplaced.length (0) < A.unplaced.length (1) → B wins.
+    const A = makeResult([makeBar(10000, [9000])], [5000]);
+    const B = makeResult([makeBar(10000, [4000]), makeBar(10000, [4000])]);
+    expect(pickBetter(A, B)).toBe(B);
+  });
+
+  it('(b) equal unplaced, less total stock material wins (fewer bars is a secondary tiebreak)', () => {
+    // A: 0 unplaced, 1 bar stockLength=6000 holding [4000], waste=2000.
+    //    total stock material = 6000
+    // B: 0 unplaced, 2 bars each stockLength=3000 holding [2000], waste=1000 each.
+    //    total stock material = 3000+3000 = 6000  ← same material
+    // Rule 2 tie (6000 == 6000). Rule 3: A has 1 bar < B's 2 bars → A wins.
+    const A = makeResult([makeBar(6000, [4000])]);
+    const B = makeResult([makeBar(3000, [2000]), makeBar(3000, [2000])]);
+    expect(pickBetter(A, B)).toBe(A);
+  });
+
+  it('(c) equal unplaced, equal total material, equal bars — largest max leftover wins', () => {
+    // A: 0 unplaced, 2 bars stockLength=10000.
+    //    Bar 0: [9000], waste=1000.  Bar 1: [8000], waste=2000.  maxLeft=2000.
+    //    total stock material = 10000+10000 = 20000
+    // B: 0 unplaced, 2 bars stockLength=10000.
+    //    Bar 0: [9500], waste=500.   Bar 1: [7500], waste=2500.  maxLeft=2500.
+    //    total stock material = 20000
+    // Rule 1 tie (0==0). Rule 2 tie (20000==20000). Rule 3 tie (2==2).
+    // Rule 4: B.maxLeft (2500) > A.maxLeft (2000) → B wins.
+    const A = makeResult([makeBar(10000, [9000]), makeBar(10000, [8000])]);
+    const B = makeResult([makeBar(10000, [9500]), makeBar(10000, [7500])]);
+    expect(pickBetter(A, B)).toBe(B);
+  });
+
+  it('(d) full tie returns the second argument (prefers BFD)', () => {
+    // A and B are identical in every metric.
+    // A: 0 unplaced, 1 bar stockLength=10000 holding [6000], waste=4000.
+    // B: 0 unplaced, 1 bar stockLength=10000 holding [6000], waste=4000.
+    // All rules tie → return b (second argument, i.e. BFD).
+    const A = makeResult([makeBar(10000, [6000])]);
+    const B = makeResult([makeBar(10000, [6000])]);
+    expect(pickBetter(A, B)).toBe(B);
   });
 });
