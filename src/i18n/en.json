@@ -7,10 +7,13 @@
   "nav.themeDark": "Dark",
   "nav.themeAuto": "Auto",
   "nav.themeLabel": "Colour scheme",
+  "footer.navLabel": "Site",
   "footer.about": "About",
   "footer.help": "Help",
   "footer.guides": "Guides",
   "footer.privacy": "Privacy",
   "footer.learnMore": "Learn more about this site",
-  "footer.privacy_note": "Calculations run in your browser. Nothing is uploaded."
+  "footer.privacy_note": "Calculations run in your browser. Nothing is uploaded.",
+  "index.heading": "Cut List Calculator",
+  "index.comingSoon": "Coming soon."
 }

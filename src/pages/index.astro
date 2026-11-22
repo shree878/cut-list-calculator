@@ -1,11 +1,12 @@
 ---
 // Placeholder home page — Phase 1 will replace with the Linear Cutting tool.
 import BaseLayout from '../layouts/BaseLayout.astro';
+import t from '../i18n/en.json';
 ---
 
-<BaseLayout title="Cut List Calculator">
+<BaseLayout title={t['site.name']}>
   <div class="container" style="padding-block: var(--space-8);">
-    <h1>Cut List Calculator</h1>
-    <p>Coming soon.</p>
+    <h1>{t['index.heading']}</h1>
+    <p>{t['index.comingSoon']}</p>
   </div>
 </BaseLayout>

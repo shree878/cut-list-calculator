@@ -1,37 +1,44 @@
 LAST UPDATED: 2026-11-22
 PHASE: 0 Foundations
-CURRENT TASK: P0-T06: translation file and base-path helper   STATUS: not started
+CURRENT TASK: P0-T06: translation file and base-path helper   STATUS: DONE
 MODEL NEEDED NOW: SONNET     NEXT MODEL CHANGE: OPUS at P1-T01
-NEXT ACTION: P0-T06 — confirm src/i18n/en.json and src/lib/base.ts are complete (created in
-P0-T04). Review all visible strings are in en.json and no string is hard-coded in .astro files.
-Accept: grep for hard-coded English phrases in src/ finds none; en.json has all strings used
-in BaseLayout.astro; base() helper used for every internal href.
-(Note: en.json and base.ts were already created in P0-T04; P0-T06 is a verification pass.)
+NEXT ACTION: P1-T01 — Switch to OPUS first. Units module: parse decimals and inch
+fractions, convert metric/imperial, integer internal units, format output.
 
 DONE (newest first, one line each):
-- P0-T05: .github/workflows/deploy.yml (test → build → deploy to GitHub Pages). public/404.html
-  and public/favicon.svg added. AGENTS.md folder map updated. npm run build ✓ (1 page).
-- P0-T04: BaseLayout.astro (html shell, no-flash theme script, skip link, header with logo +
-  theme toggle, footer). src/lib/base.ts base-path helper. src/i18n/en.json strings for P0-T04.
-  index.astro updated to use BaseLayout. npm test ✓, npm run build ✓.
-  Also fixed base.css lines 112 and 124 hard-coded values (3px → --link-underline-offset,
-  2px → --radius-xs); tokens added to DESIGN.md section 6 and tokens.css sections 5 and 9.
-- P0-T03: tokens.css and base.css from DESIGN.md. All colour tokens with verified contrast
-  ratios, full type/spacing/radius/shadow/motion/layout/interaction scales. No hard-coded
-  values outside tokens.css.
+- P0-T06: Verification pass — en.json and base.ts confirmed complete. Fixed 3
+  hard-coded strings: index.astro h1 and p now use t['index.heading'] and
+  t['index.comingSoon']; BaseLayout.astro footer nav aria-label now uses
+  t['footer.navLabel']. Added 3 new keys to en.json (footer.navLabel,
+  index.heading, index.comingSoon). Grep for hard-coded visible strings and
+  internal hrefs: none found. npm test ✓, npm run build ✓ (1 page).
+- P0-T05: .github/workflows/deploy.yml (test → build → deploy to GitHub Pages).
+  public/404.html and public/favicon.svg added. AGENTS.md folder map updated.
+  npm run build ✓ (1 page).
+  STATUS: written, live check pending (live URL not yet tested).
+- P0-T04: BaseLayout.astro (html shell, no-flash theme script, skip link, header
+  with logo + theme toggle, footer). src/lib/base.ts base-path helper.
+  src/i18n/en.json strings for P0-T04. index.astro updated to use BaseLayout.
+  npm test ✓, npm run build ✓.
+  Also fixed base.css lines 112 and 124 hard-coded values (3px →
+  --link-underline-offset, 2px → --radius-xs); tokens added to DESIGN.md
+  section 6 and tokens.css sections 5 and 9.
+- P0-T03: tokens.css and base.css from DESIGN.md. All colour tokens with verified
+  contrast ratios, full type/spacing/radius/shadow/motion/layout/interaction
+  scales. No hard-coded values outside tokens.css.
 - P0-T02: Folder map in AGENTS.md matches real tree. All paths correct.
-- P0-T01: Astro 5 (static), TypeScript strict, Vitest 2, npm scripts dev/test/build/preview,
-  .gitignore, public/.nojekyll, placeholder src/pages/index.astro, smoke test.
-  npm test ✓ (1 test), npm run build ✓ (1 page).
-  Base path: /cut-list-calculator (GitHub user: shree878).
-- P0-T00: project control files (AGENTS.md, plan.txt, progress.txt, DESIGN.md, .agent/skills).
+- P0-T01: Astro 5 (static), TypeScript strict, Vitest 2, npm scripts
+  dev/test/build/preview, .gitignore, public/.nojekyll, placeholder
+  src/pages/index.astro, smoke test. npm test ✓ (1 test), npm run build ✓
+  (1 page). Base path: /cut-list-calculator (GitHub user: shree878).
+- P0-T00: project control files (AGENTS.md, plan.txt, progress.txt, DESIGN.md,
+  .agent/skills).
 
 IN PROGRESS / PARTIAL:
 - (nothing)
 
 TODO (next tasks):
-- P0-T06 translation file and base-path helper (verify pass — mostly done in P0-T04)
-- P1-T01 and beyond (OPUS model)
+- P1-T01..T06 (OPUS model — switch before starting)
 
 DECISIONS:
 - Astro 5 static + TypeScript strict + Vitest 2 + GitHub Actions to GitHub Pages
@@ -45,7 +52,9 @@ DECISIONS:
 KNOWN ISSUES / BLOCKERS:
 - Q2: Contact email or form for the About page (not blocking yet)
 - Q3: Home page hub or stays Linear tool? (decide at Phase 3)
-- DEPLOY: deploy.yml created but not yet triggered. Needs "GitHub Pages → Source → GitHub
-  Actions" enabled in repo settings before first push will succeed.
+- DEPLOY: deploy.yml created but not yet triggered. Needs "GitHub Pages → Source →
+  GitHub Actions" enabled in repo settings before first push will succeed.
+
+NEXT MODEL: OPUS (needed for P1-T01 onward — switch before starting P1-T01)
 
 DEPLOY: not deployed yet (workflow created; next push to main will trigger it)
