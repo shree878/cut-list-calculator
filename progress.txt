@@ -1,11 +1,17 @@
 LAST UPDATED: 2026-11-22
-PHASE: 0 Foundations
-CURRENT TASK: P0-fix   STATUS: DONE
-MODEL NEEDED NOW: SONNET     NEXT MODEL CHANGE: OPUS at P1-T01
-NEXT ACTION: P1-T01 — Switch to OPUS first. Units module: parse decimals and inch
-fractions, convert metric/imperial, integer internal units, format output.
+PHASE: 1 Linear Cutting Calculator
+CURRENT TASK: P1-T01   STATUS: DONE
+MODEL NEEDED NOW: OPUS     NEXT MODEL CHANGE: SONNET at P1-T07
+NEXT ACTION: P1-T02 — Input validation module: sizes > 0, kerf >= 0, piece longer
+than every stock reported as "cannot fit", quantity limits. Tests for each case
+with plain-language error messages.
 
 DONE (newest first, one line each):
+- P1-T01: Units module (src/lib/units.ts). Parse decimals and inch fractions
+  (mixed numbers, bare fractions), convert metric↔imperial via exact 127/32
+  ratio, integer internal units (0.1 mm / 1/64 in), format output (metric
+  decimals, reduced fractions, feet-and-inches). 87 tests (parseLength,
+  formatLength, convertToSystem, round-trips). npm test ✓, npm run build ✓.
 - P0-fix: Theme toggle: removed Auto option (Light + Dark only). First visit still
   follows prefers-color-scheme with no flash; clicking saves choice to localStorage.
   Footer: removed Guides link (page does not exist until Phase 5; kept About, Help,
@@ -13,37 +19,20 @@ DONE (newest first, one line each):
   nav.themeAuto and footer.guides from en.json. npm test ✓, npm run build ✓.
 - P0-T05: live site verified at https://shree878.github.io/cut-list-calculator/ — DONE.
 - P0-T06: Verification pass — en.json and base.ts confirmed complete. Fixed 3
-  hard-coded strings: index.astro h1 and p now use t['index.heading'] and
-  t['index.comingSoon']; BaseLayout.astro footer nav aria-label now uses
-  t['footer.navLabel']. Added 3 new keys to en.json (footer.navLabel,
-  index.heading, index.comingSoon). Grep for hard-coded visible strings and
-  internal hrefs: none found. npm test ✓, npm run build ✓ (1 page).
-- P0-T05: .github/workflows/deploy.yml (test → build → deploy to GitHub Pages).
-  public/404.html and public/favicon.svg added. AGENTS.md folder map updated.
-  npm run build ✓ (1 page).
-- P0-T04: BaseLayout.astro (html shell, no-flash theme script, skip link, header
-  with logo + theme toggle, footer). src/lib/base.ts base-path helper.
-  src/i18n/en.json strings for P0-T04. index.astro updated to use BaseLayout.
-  npm test ✓, npm run build ✓.
-  Also fixed base.css lines 112 and 124 hard-coded values (3px →
-  --link-underline-offset, 2px → --radius-xs); tokens added to DESIGN.md
-  section 6 and tokens.css sections 5 and 9.
-- P0-T03: tokens.css and base.css from DESIGN.md. All colour tokens with verified
-  contrast ratios, full type/spacing/radius/shadow/motion/layout/interaction
-  scales. No hard-coded values outside tokens.css.
-- P0-T02: Folder map in AGENTS.md matches real tree. All paths correct.
-- P0-T01: Astro 5 (static), TypeScript strict, Vitest 2, npm scripts
-  dev/test/build/preview, .gitignore, public/.nojekyll, placeholder
-  src/pages/index.astro, smoke test. npm test ✓ (1 test), npm run build ✓
-  (1 page). Base path: /cut-list-calculator (GitHub user: shree878).
-- P0-T00: project control files (AGENTS.md, plan.txt, progress.txt, DESIGN.md,
-  .agent/skills).
+  hard-coded strings. npm test ✓, npm run build ✓ (1 page).
+- P0-T05: .github/workflows/deploy.yml. public/404.html and public/favicon.svg added.
+- P0-T04: BaseLayout.astro, theme toggle, header, footer. src/lib/base.ts.
+- P0-T03: tokens.css and base.css from DESIGN.md.
+- P0-T02: Folder map in AGENTS.md matches real tree.
+- P0-T01: Astro 5, TypeScript strict, Vitest 2, npm scripts, smoke test.
+- P0-T00: project control files.
 
 IN PROGRESS / PARTIAL:
 - (nothing)
 
 TODO (next tasks):
-- P1-T01..T06 (OPUS model — switch before starting)
+- P1-T02..T06 (OPUS model)
+- P1-T07 onward (SONNET model — switch before starting)
 
 DECISIONS:
 - Astro 5 static + TypeScript strict + Vitest 2 + GitHub Actions to GitHub Pages
@@ -54,11 +43,13 @@ DECISIONS:
 - deploy.yml: actions/checkout@v4, actions/setup-node@v4, configure-pages@v5,
   upload-pages-artifact@v3, deploy-pages@v4
 - Theme toggle: Light + Dark only (no Auto button). First visit uses OS pref silently.
+- Units: internal metric = 0.1 mm (×10), internal imperial = 1/64 in (×64).
+  Cross-system round-trip tolerance: ≤3 metric units (0.3 mm), ≤1 imperial (1/64 in).
 
 KNOWN ISSUES / BLOCKERS:
 - Q2: Contact email or form for the About page (not blocking yet)
 - Q3: Home page hub or stays Linear tool? (decide at Phase 3)
 
-NEXT MODEL: OPUS (needed for P1-T01 onward — switch before starting P1-T01)
+NEXT MODEL: OPUS (needed through P1-T06)
 
 DEPLOY: live at https://shree878.github.io/cut-list-calculator/ (verified 2026-11-22)
