@@ -2,8 +2,7 @@ LAST UPDATED: 2026-11-22
 PHASE: 1 Linear Cutting Calculator
 CURRENT TASK: P1-T03   STATUS: DONE
 MODEL NEEDED NOW: OPUS     NEXT MODEL CHANGE: SONNET at P1-T07
-NEXT ACTION: P1-T04 — ToolLayout component and linear calculator page shell
-  (read plan.txt P1-T04, then ux-information-architecture + astro-static-site skills).
+NEXT ACTION: P1-T04 (OPUS) - multiple stock lengths, limited quantities, offcuts as stock. Read the P1-T04 notes in TASK NOTES at the end of plan.txt first. Extend src/algorithms/linear1d.ts, do not rewrite it.
 
 DONE (newest first, one line each):
 - P1-T03: 1D linear cutting algorithm (src/algorithms/linear1d.ts). FFD + BFD,
