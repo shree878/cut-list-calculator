@@ -5,6 +5,11 @@ MODEL NEEDED NOW: OPUS     NEXT MODEL CHANGE: SONNET at P1-T07
 NEXT ACTION: P1-T05 (OPUS) - Results model: per-bar pieces in cut order, waste, totals, waste %, unplaced list, plain-text cut list output. Read TASK NOTES for P1-T05 in plan.txt first.
 
 DONE (newest first, one line each):
+- P1-T04 fix: pickBetter new comparison order: (1) fewer unplaced pieces,
+  (2) smaller total stock material (sum bar.stockLength), (3) fewer bars,
+  (4) larger single leftover, (5) prefer BFD. Removed redundant total-waste
+  compare. Exported pickBetter. 4 new hand-built unit tests (makeBar/makeResult
+  helpers, arithmetic in comments). npm test ✓ (178), npm run build ✓.
 - P1-T04: Multi-stock support (src/algorithms/linear1d.ts). solveLinear1DMultiStock
   accepts [{length, quantity}] stocks (Infinity=unlimited). Picks shortest
   stock that fits. Limited quantities enforced (exhausted → next stock or
