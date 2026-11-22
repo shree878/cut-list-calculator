@@ -1,10 +1,17 @@
 LAST UPDATED: 2026-11-22
 PHASE: 1 Linear Cutting Calculator
-CURRENT TASK: P1-T04   STATUS: DONE
+CURRENT TASK: P1-T05   STATUS: DONE
 MODEL NEEDED NOW: OPUS     NEXT MODEL CHANGE: SONNET at P1-T07
-NEXT ACTION: P1-T05 (OPUS) - Results model: per-bar pieces in cut order, waste, totals, waste %, unplaced list, plain-text cut list output. Read TASK NOTES for P1-T05 in plan.txt first.
+NEXT ACTION: P1-T06 (OPUS) - Test hardening: seeded fuzz tests, edge cases, 90% line coverage. Read TASK NOTES for P1-T06 in plan.txt first.
 
 DONE (newest first, one line each):
+- P1-T05: Results model (src/algorithms/linear1d-results.ts). toDisplayResult
+  transforms LinearResult → DisplayResult with per-bar cuts in order, waste,
+  summary totals (bars, stock material, used, kerf, waste, waste%), unplaced
+  list. formatCutList takes a LengthFormatter function — no hard-coded English.
+  All values in internal units. 16 new tests: known-answer (hand-verified
+  arithmetic), invariant (no overlap, all pieces accounted by sourceIndex,
+  per-bar length conserved), formatter spy test. npm test ✓ (194), build ✓.
 - P1-T04 fix: pickBetter new comparison order: (1) fewer unplaced pieces,
   (2) smaller total stock material (sum bar.stockLength), (3) fewer bars,
   (4) larger single leftover, (5) prefer BFD. Removed redundant total-waste
@@ -52,7 +59,7 @@ IN PROGRESS / PARTIAL:
 - (nothing)
 
 TODO (next tasks):
-- P1-T05..T06 (OPUS model)
+- P1-T06 (OPUS model)
 - P1-T07 onward (SONNET model — switch before starting)
 
 DECISIONS:

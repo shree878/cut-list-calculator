@@ -32,6 +32,7 @@ Astro (static) + TypeScript strict + plain CSS tokens + Vitest. Node LTS.
 - src/layouts/                                    BaseLayout, ToolLayout
 - src/components/                                 only components listed in DESIGN.md
 - src/algorithms/                                 pure TypeScript, no DOM
+- src/algorithms/linear1d-results.ts              display-ready results model + plain-text cut list
 - src/lib/                                        units, parsing, share link, i18n, base path
 - src/i18n/en.json                                all visible strings
 - src/styles/tokens.css, base.css                 design tokens and element defaults
