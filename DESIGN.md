@@ -82,7 +82,8 @@ Name: Cut List Calculator. Logo: wordmark only in --color-text, with a small squ
 
 ## 6. Spacing, shape, motion
 - Spacing scale (px): 4, 8, 12, 16, 24, 32, 48, 64 as --space-1..8.
-- Radius: --radius-s 6 px (inputs, buttons), --radius-m 12 px (cards).
+- Radius: --radius-xs 2 px (inline elements, e.g. focus rings on anchors), --radius-s 6 px (inputs, buttons), --radius-m 12 px (cards).
+- Link underline: --link-underline-offset 3 px (space between baseline and underline).
 - Shadow: --shadow-1 (cards, subtle), --shadow-2 (menus). Prefer borders.
 - Motion: 120 to 200 ms ease-out. `prefers-reduced-motion` turns animation off.
 - Layout: content max width 1120 px, side padding 16 px (phone) and 24 px (desktop), breakpoints 640, 960, 1280. Tool pages: one column on phone, two columns from 960 px (inputs left, results right).

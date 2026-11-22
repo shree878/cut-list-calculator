@@ -1,13 +1,17 @@
-LAST UPDATED: 2026-11-21
+LAST UPDATED: 2026-11-22
 PHASE: 0 Foundations
-CURRENT TASK: P0-T04: Base layout (header, tool switcher, theme toggle, footer)   STATUS: not started
+CURRENT TASK: P0-T05: deploy pipeline and placeholder page live   STATUS: not started
 MODEL NEEDED NOW: SONNET     NEXT MODEL CHANGE: OPUS at P1-T01
-NEXT ACTION: P0-T04 — build BaseLayout.astro (html shell, no-flash theme script, skip link,
-header with logo + theme toggle, footer with links). Read ux-information-architecture skill
-and DESIGN.md components section 8. Accept: keyboard order correct; theme toggle works and
-persists; looks right at 360, 768, 1280 px in both themes.
+NEXT ACTION: P0-T05 — set up .github/workflows/deploy.yml (test, build, deploy to GitHub Pages).
+Read github-pages-deploy skill. Accept: green workflow run; placeholder page live at
+shree878.github.io/cut-list-calculator/
 
 DONE (newest first, one line each):
+- P0-T04: BaseLayout.astro (html shell, no-flash theme script, skip link, header with logo +
+  theme toggle, footer). src/lib/base.ts base-path helper. src/i18n/en.json strings for P0-T04.
+  index.astro updated to use BaseLayout. npm test ✓, npm run build ✓.
+  Also fixed base.css lines 112 and 124 hard-coded values (3px → --link-underline-offset,
+  2px → --radius-xs); tokens added to DESIGN.md section 6 and tokens.css sections 5 and 9.
 - P0-T03: tokens.css and base.css from DESIGN.md. All colour tokens with verified contrast
   ratios, full type/spacing/radius/shadow/motion/layout/interaction scales. No hard-coded
   values outside tokens.css. Contrast table re-verified: light body 18.2:1, muted 9.7:1,
@@ -26,7 +30,6 @@ IN PROGRESS / PARTIAL:
 - (nothing)
 
 TODO (next tasks):
-- P0-T04 base layout (header, tool switcher, theme toggle, footer)
 - P0-T05 deploy pipeline and placeholder page live
 - P0-T06 translation file and base-path helper
 

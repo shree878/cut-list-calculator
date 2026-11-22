@@ -1,5 +1,16 @@
 {
-  "site": {
-    "name": "Cut List Calculator"
-  }
+  "site.name": "Cut List Calculator",
+  "site.tagline": "Free browser-only cutting calculators for wood, sheet, tile and fabric.",
+  "nav.skipToMain": "Skip to main content",
+  "nav.tools": "Tools",
+  "nav.themeLight": "Light",
+  "nav.themeDark": "Dark",
+  "nav.themeAuto": "Auto",
+  "nav.themeLabel": "Colour scheme",
+  "footer.about": "About",
+  "footer.help": "Help",
+  "footer.guides": "Guides",
+  "footer.privacy": "Privacy",
+  "footer.learnMore": "Learn more about this site",
+  "footer.privacy_note": "Calculations run in your browser. Nothing is uploaded."
 }

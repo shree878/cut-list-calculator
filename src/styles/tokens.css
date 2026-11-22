@@ -111,8 +111,9 @@
    5. RADIUS
    ========================================================= */
 :root {
-  --radius-s: 6px;    /* inputs, buttons */
-  --radius-m: 12px;   /* cards */
+  --radius-xs: 2px;   /* inline elements, e.g. focus ring on anchors */
+  --radius-s:  6px;   /* inputs, buttons */
+  --radius-m:  12px;  /* cards */
 }
 
 /* =========================================================
@@ -157,9 +158,10 @@
    9. INTERACTION
    ========================================================= */
 :root {
-  --tap-target-min:  48px;
-  --input-height:    56px;
-  --button-height:   56px;
-  --focus-ring:      3px solid var(--color-brand);
-  --focus-offset:    2px;
+  --tap-target-min:          48px;
+  --input-height:            56px;
+  --button-height:           56px;
+  --focus-ring:              3px solid var(--color-brand);
+  --focus-offset:            2px;
+  --link-underline-offset:   3px;   /* space between text baseline and underline */
 }

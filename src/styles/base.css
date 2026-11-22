@@ -109,7 +109,7 @@ b {
 a {
   color:           var(--color-brand);
   text-decoration: underline;
-  text-underline-offset: 3px;
+  text-underline-offset: var(--link-underline-offset);
   transition:      color var(--duration-fast) var(--easing);
 }
 
@@ -121,7 +121,7 @@ a:focus-visible {
 a:focus-visible {
   outline:        var(--focus-ring);
   outline-offset: var(--focus-offset);
-  border-radius:  2px;
+  border-radius:  var(--radius-xs);
 }
 
 /* =========================================================
