@@ -146,7 +146,7 @@ P1-T04 [OPUS] | Multiple stock lengths, limited stock quantities, reusable offcu
 P1-T05 [OPUS] | Results model: per-bar pieces in cut order, waste, totals, waste %,
         unplaced list, plain-text cut list output.
         Accept: invariant tests (no overlap, all pieces accounted, length conserved).
-P1-T06 [OPUS] | Test hardening: seeded fuzz tests, edge cases, 90% line coverage.
+P1-T06 [OPUS] DONE | Test hardening: seeded fuzz tests, edge cases, 90% line coverage.
         Accept: coverage target met; npm test green.
 
 Layer: UI
@@ -156,7 +156,7 @@ P1-T07 [SONNET] | Tool page template (ToolLayout) with title block, "i How to us
 P1-T08 [SONNET] | Stock + settings inputs: units toggle, stock length(s), kerf, advanced
         collapsed. Labels, units, hints, error text per DESIGN.md.
         Accept: keyboard-only use works; numeric keypad appears on phones.
-P1-T09 [SONNET] | Pieces row editor: length, quantity, add, duplicate, delete; keeps data
+P1-T09 [FLASH:high] | Pieces row editor: length, quantity, add, duplicate, delete; keeps data
         when editing; "Try sample" button.
         Accept: works with 50+ rows without slowdown; empty state is helpful.
 P1-T10 [SONNET] | Calculate flow and results summary, partial and error states, polite
@@ -212,13 +212,14 @@ PHASE 2  SHEET GOODS (plywood, MDF)
 ----------------------------------------------------------------------
 P2-T01 [OPUS] | Guillotine algorithm with split and choice rules, several combinations,
         best kept; kerf at every split; edge trim option.
-P2-T02 [OPUS] | Grain and rotation per piece; offcuts above a minimum size reported.
-P2-T03 [OPUS] | Ordered cut sequence (rip then crosscut) output.
-P2-T04 [OPUS] | Tests: overlap, containment, conservation, guillotine-compatibility,
+        (Opus session 1 does P2-T01 AND P2-T02 together: grain and rotation are part of the solver search.)
+P2-T02 [OPUS] merged into P2-T01 | Grain and rotation per piece; offcuts above a minimum size reported.
+P2-T03 [OPUS] (Opus session 2) | Ordered cut sequence (rip then crosscut) output.
+P2-T04 [FLASH:high] | Tests: overlap, containment, conservation, guillotine-compatibility,
         grain lock, fuzz, known answers.
 P2-T05 [FLASH:high] | UI: width x length rows, stock sheet size(s), grain toggle, advanced section;
         same page template.
-P2-T06 [SONNET] | Sheet diagram with numbered cuts, offcuts, dimensions; print layout.
+P2-T06 [FLASH:high] | Sheet diagram with numbered cuts, offcuts, dimensions; print layout.
 P2-T07 [FLASH:med] | Page at /plywood-cut-list-calculator/, nav tab goes live, SEO, Help updates.
 P2-T08 [FLASH:med] | Accessibility, performance, offline re-check; deploy; feedback round.
 Definition of Done: same list as Phase 1 plus guillotine-compatible by default.
@@ -230,7 +231,7 @@ PHASE 3  TILES
 P3-T01..: area, waste % (editable defaults), grout width, box rounding, straight
 and diagonal lay; simple layout diagram; tests; page; SEO; deploy; feedback.
 (Break into tasks when Phase 3 starts.)
-Model plan (estimate): logic + tests SONNET; UI and diagram FLASH:high (copy the Phase 1 patterns); page, SEO, checks FLASH:med.
+Model plan: everything FLASH:high (logic with hand-verified tests, UI and diagram copying the Phase 1 patterns); page, SEO, checks FLASH:med. If Flash fails twice on a task, use one reserve Sonnet session.
 
 ----------------------------------------------------------------------
 PHASE 4  FABRIC
@@ -238,7 +239,7 @@ PHASE 4  FABRIC
 P4-T01..: fixed roll width strip packing, nap/pattern direction, seam allowance,
 yardage and metres output; tests; page; SEO; deploy; feedback.
 (Break into tasks when Phase 4 starts.)
-Model plan (estimate): logic + tests OPUS; diagram SONNET; UI FLASH:high; page, SEO, checks FLASH:med.
+Model plan: logic + tests = Opus session 3 (if no Opus session was needed for an emergency solver fix; otherwise one Sonnet reserve session); UI and diagram FLASH:high; page, SEO, checks FLASH:med.
 
 ----------------------------------------------------------------------
 PHASE 5  GUIDES AND GROWTH
@@ -291,31 +292,56 @@ consent handling must be reviewed first.
  Q3 Home page becomes a tool hub later, or stays the Linear tool? (decide at Phase 3)
 
 ======================================================================
-11. MODEL SWITCHING (Antigravity cannot switch models by itself)
+11. MODEL SWITCHING AND CLAUDE BUDGET (Antigravity cannot switch models by itself)
 ======================================================================
  Models: OPUS = Claude Opus 4.6.  SONNET = Claude Sonnet 4.6.
          FLASH = Gemini 3.8 Flash, run at low, med or high effort (tag [FLASH:low|med|high]).
- Every task above carries a tag. Pick the cheapest model that is safe for the task:
-  OPUS   = algorithm and solver logic and its hand-verified tests (P1-T06, P2-T01..T04, Phase 4 logic).
-  SONNET = new patterns that later work copies (page template, inputs, row editor, calculate flow,
-           SVG diagram, service worker) and Phase 3 logic. Subtle state or caching bugs live here.
-  FLASH  = light, well-specified work: tables, print CSS, share link, audits, static pages, SEO,
-           presets, deploy checks, and UI that copies an existing Phase 1 pattern.
-  FLASH effort: low = config, copy, deploy notes. med = default. high = state handling, audits.
- Grouping: Phase 1 runs OPUS (T06) -> SONNET (T07..T11) -> FLASH (T12..T16) -> SONNET (T17) -> FLASH (T18..T21).
- Phase 2 runs OPUS (T01..T04) -> FLASH (T05) -> SONNET (T06) -> FLASH (T07, T08).
+ Budget reality: Flash is almost unlimited. Claude is scarce:
+   OPUS   max 3 sessions from now on.
+   SONNET max 7 sessions (5 planned + 2 reserve).
+ A "session" = one task (a second small task only if the first leaves over half the credits).
+ So Flash does everything that a strong test or an existing pattern can protect.
+
+ CLAUDE SESSION PLAN
+  Opus 1    P2-T01 + P2-T02  guillotine sheet solver with grain and rotation (hardest logic).
+  Opus 2    P2-T03           ordered cut sequence (rip then crosscut).
+  Opus 3    Phase 4 fabric logic. If a real solver bug appears earlier, use Opus 3 for the bug and
+            give fabric logic to a reserve Sonnet session.
+  Sonnet 1  P1-T07  tool page template (all later pages copy it).
+  Sonnet 2  P1-T08  stock and settings inputs, units toggle (the drift note applies).
+  Sonnet 3  P1-T10  calculate flow: wire solver and results to the page, error codes to text.
+  Sonnet 4  P1-T11  SVG diagram (all later diagrams copy it).
+  Sonnet 5  P1-T17  PWA offline (service worker bugs are hard to spot).
+  Sonnet 6-7 RESERVE: use only when a Flash task fails twice, or for P2-T06 / Phase 3 if Flash's work is poor.
+
+ FLASH EFFORT: low = config, copy, deploy notes. med = default. high = state handling, audits,
+ tests, logic that copies an existing pattern.
+ Why it is safe to give Flash this much: every Flash task is guarded by (1) automated tests,
+ (2) the grep rules check in AGENTS.md, (3) the owner's visual check in the browser, and
+ (4) free review: the owner uploads key files to the planning chat before the next task.
+ Mandatory review points (upload the files): after P1-T09, P1-T14, P1-T15, P2-T04, and
+ after each Flash-built calculator logic module.
+
+ Rules for Flash tasks that write tests: expected values must be worked out by hand with the
+ arithmetic in a comment. Never copy an expected value from the code's own output.
+ Flash tasks that copy a pattern must name the file they copied from in progress.txt.
+
+ Order and switches: Phase 1: SONNET T07,T08 -> FLASH T09 -> SONNET T10,T11 -> FLASH T12..T16 ->
+ SONNET T17 -> FLASH T18..T21 -> OWNER T22.   Phase 2: OPUS (T01+T02, then T03) -> FLASH T04..T08.
+ Phases 3 and 4 follow the model plan under each phase.
+
  Protocol: the owner states the active model (and FLASH effort) in the first message of a session
  (see AGENTS.md). Before starting a task, the agent compares it with the task tag.
  If they differ, the agent does not start the task: it writes NEXT MODEL in progress.txt,
  commits, and tells the owner "Switch to <model>, then send the start prompt."
- A stronger model may do a lighter task only when the owner says so (it costs more credits).
- A weaker model never does a heavier task.
- Escalation: FLASH stops and asks for SONNET if the task needs changes in src/algorithms/ or
- tests/algorithms/, if npm test or npm run build still fails after 2 fix attempts, or if it is unsure.
- SONNET stops and asks for OPUS if a task turns out to need new algorithm design.
- Flash trial rule: P1-T12 is the first FLASH task. The owner reviews its result closely
- (rules check, look at it in the browser). If FLASH breaks the rules in AGENTS.md twice,
- move the remaining FLASH tasks to SONNET and note it in progress.txt.
+ A stronger model does a lighter task only when the owner says so. A weaker model never does a heavier one.
+ Escalation: FLASH stops and asks for help (a reserve Sonnet session) if it needs changes in
+ src/algorithms/ or tests/algorithms/ beyond its own task, if npm test or npm run build still
+ fails after 2 fix attempts, or if it is unsure. SONNET stops and asks for OPUS only for new
+ algorithm design.
+ Flash trial: P1-T09 is the first FLASH task. The owner reviews it closely (rules check,
+ browser, upload to the planning chat). If FLASH breaks the rules in AGENTS.md twice, spend a
+ reserve Sonnet session on the failing task and tighten the prompt.
 
 ======================================================================
 TASK NOTES (read the note for your current task before starting it)
