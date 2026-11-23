@@ -101,7 +101,7 @@ guillotine-aware layouts, printable cut lists. Re-check competitors before Phase
 ======================================================================
 5. PHASES AND TASKS
 ======================================================================
-Task format: ID | goal | acceptance check. One task = one agent session.
+Task format: ID | goal | acceptance check. Tags: [OPUS] [SONNET] [FLASH:low|med|high] [OWNER]=done by the owner, no agent. One task = one agent session.
 Layers always go in this order: Foundations, Logic, UI, Output, Quality,
 Discovery, Launch. Never skip down the stack.
 
@@ -165,20 +165,20 @@ P1-T10 [SONNET] | Calculate flow and results summary, partial and error states, 
 P1-T11 [SONNET] | SVG diagram: scaled bars, numbered pieces, sizes, waste hatch, cut order,
         title/description, scrolls inside its frame.
         Accept: readable in black and white; table equivalent exists (P1-T12).
-P1-T12 [SONNET] | Cut list table (numbered cuts per bar) and "Verify before cutting" note.
+P1-T12 [FLASH:med] | Cut list table (numbered cuts per bar) and "Verify before cutting" note.
         Accept: matches the diagram exactly; note visible beside results.
 
 Layer: output
-P1-T13 [SONNET] | Print stylesheet (diagram + cut list + summary, no chrome).
+P1-T13 [FLASH:med] | Print stylesheet (diagram + cut list + summary, no chrome).
         Accept: prints on one A4/Letter page for a typical job, in black and white.
-P1-T14 [SONNET] | Copy-link share URL that restores inputs; Copy as text.
+P1-T14 [FLASH:high] | Copy-link share URL that restores inputs; Copy as text.
         Accept: opening the link in a new browser reproduces the same result.
 
 Layer: quality
-P1-T15 [SONNET] | Accessibility pass per accessibility skill (keyboard, contrast in both
+P1-T15 [FLASH:high] | Accessibility pass per accessibility skill (keyboard, contrast in both
         themes, 200% zoom, 320 px width, Lighthouse accessibility 95+ in CI).
         Accept: results recorded in progress.txt.
-P1-T16 [SONNET] | Performance pass: JS under about 100 KB gzipped for the tool page,
+P1-T16 [FLASH:med] | Performance pass: JS under about 100 KB gzipped for the tool page,
         no layout shift, first paint under 2 s on mid-range phone over 4G.
         Accept: Lighthouse CI numbers recorded.
 P1-T17 [SONNET] | PWA offline: manifest, icons, service worker (versioned cache), update
@@ -187,19 +187,19 @@ P1-T17 [SONNET] | PWA offline: manifest, icons, service worker (versioned cache)
         test passes.
 
 Layer: discovery
-P1-T18 [SONNET] | About, Help (full how-to, FAQ, limits, kerf explained), Privacy, 404.
+P1-T18 [FLASH:med] | About, Help (full how-to, FAQ, limits, kerf explained), Privacy, 404.
         Footer "Learn more" link leads to About.
         Accept: all linked from footer; no tool page text gets longer.
-P1-T19 [SONNET] | SEO basics: unique title and description, canonical, Open Graph, JSON-LD,
+P1-T19 [FLASH:med] | SEO basics: unique title and description, canonical, Open Graph, JSON-LD,
         sitemap.xml, robots.txt, breadcrumbs.
         Accept: validators show no errors; URLs respect the base path.
-P1-T20 [SONNET] | Preset pages: pipe and lumber (own defaults, copy, FAQ).
+P1-T20 [FLASH:med] | Preset pages: pipe and lumber (own defaults, copy, FAQ).
         Accept: pages are clearly distinct and useful, not thin duplicates.
 
 Layer: launch
-P1-T21 [SONNET] | Deploy, smoke test on a real phone (home loads, calculation, offline,
+P1-T21 [FLASH:low] | Deploy, smoke test on a real phone (home loads, calculation, offline,
         dark mode, print), record in progress.txt.
-P1-T22 [SONNET] | Show to 5 to 10 real carpenters/tailors/DIYers; record feedback in
+P1-T22 [OWNER] | Show to 5 to 10 real carpenters/tailors/DIYers; record feedback in
         section 9 of this file; decide fixes before Phase 2.
 
 Definition of Done, Phase 1: all tasks accepted; algorithm tests green in CI;
@@ -216,11 +216,11 @@ P2-T02 [OPUS] | Grain and rotation per piece; offcuts above a minimum size repor
 P2-T03 [OPUS] | Ordered cut sequence (rip then crosscut) output.
 P2-T04 [OPUS] | Tests: overlap, containment, conservation, guillotine-compatibility,
         grain lock, fuzz, known answers.
-P2-T05 [SONNET] | UI: width x length rows, stock sheet size(s), grain toggle, advanced section;
+P2-T05 [FLASH:high] | UI: width x length rows, stock sheet size(s), grain toggle, advanced section;
         same page template.
 P2-T06 [SONNET] | Sheet diagram with numbered cuts, offcuts, dimensions; print layout.
-P2-T07 [SONNET] | Page at /plywood-cut-list-calculator/, nav tab goes live, SEO, Help updates.
-P2-T08 [SONNET] | Accessibility, performance, offline re-check; deploy; feedback round.
+P2-T07 [FLASH:med] | Page at /plywood-cut-list-calculator/, nav tab goes live, SEO, Help updates.
+P2-T08 [FLASH:med] | Accessibility, performance, offline re-check; deploy; feedback round.
 Definition of Done: same list as Phase 1 plus guillotine-compatible by default.
 Parked inside Phase 2: advanced "any-cut" (MaxRects) mode, only if feedback asks.
 
@@ -230,6 +230,7 @@ PHASE 3  TILES
 P3-T01..: area, waste % (editable defaults), grout width, box rounding, straight
 and diagonal lay; simple layout diagram; tests; page; SEO; deploy; feedback.
 (Break into tasks when Phase 3 starts.)
+Model plan (estimate): logic + tests SONNET; UI and diagram FLASH:high (copy the Phase 1 patterns); page, SEO, checks FLASH:med.
 
 ----------------------------------------------------------------------
 PHASE 4  FABRIC
@@ -237,6 +238,7 @@ PHASE 4  FABRIC
 P4-T01..: fixed roll width strip packing, nap/pattern direction, seam allowance,
 yardage and metres output; tests; page; SEO; deploy; feedback.
 (Break into tasks when Phase 4 starts.)
+Model plan (estimate): logic + tests OPUS; diagram SONNET; UI FLASH:high; page, SEO, checks FLASH:med.
 
 ----------------------------------------------------------------------
 PHASE 5  GUIDES AND GROWTH
@@ -291,17 +293,29 @@ consent handling must be reviewed first.
 ======================================================================
 11. MODEL SWITCHING (Antigravity cannot switch models by itself)
 ======================================================================
- Every task above carries a tag: [OPUS] for Opus 4.6, [SONNET] for Sonnet 4.6.
- OPUS = algorithm and logic work (P1-T01..T06, P2-T01..T04) and big plan changes.
- SONNET = everything else (setup, UI, styling, content, deploy, quality).
- Tasks are grouped so the model changes only a few times per phase:
-   Phase 0 all Sonnet -> P1-T01..T06 Opus -> P1-T07 onward Sonnet -> P2-T01..T04 Opus -> rest Sonnet.
- Protocol: the owner states the active model in the first message of a session
+ Models: OPUS = Claude Opus 4.6.  SONNET = Claude Sonnet 4.6.
+         FLASH = Gemini 3.8 Flash, run at low, med or high effort (tag [FLASH:low|med|high]).
+ Every task above carries a tag. Pick the cheapest model that is safe for the task:
+  OPUS   = algorithm and solver logic and its hand-verified tests (P1-T06, P2-T01..T04, Phase 4 logic).
+  SONNET = new patterns that later work copies (page template, inputs, row editor, calculate flow,
+           SVG diagram, service worker) and Phase 3 logic. Subtle state or caching bugs live here.
+  FLASH  = light, well-specified work: tables, print CSS, share link, audits, static pages, SEO,
+           presets, deploy checks, and UI that copies an existing Phase 1 pattern.
+  FLASH effort: low = config, copy, deploy notes. med = default. high = state handling, audits.
+ Grouping: Phase 1 runs OPUS (T06) -> SONNET (T07..T11) -> FLASH (T12..T16) -> SONNET (T17) -> FLASH (T18..T21).
+ Phase 2 runs OPUS (T01..T04) -> FLASH (T05) -> SONNET (T06) -> FLASH (T07, T08).
+ Protocol: the owner states the active model (and FLASH effort) in the first message of a session
  (see AGENTS.md). Before starting a task, the agent compares it with the task tag.
- If they differ, the agent does not start the task: it writes NEXT MODEL in
- progress.txt, commits, and tells the owner "Switch to <model>, then send the start prompt."
- If a [SONNET] task turns out to need hard algorithm design, the agent stops and
- asks the owner to switch to Opus instead of guessing.
+ If they differ, the agent does not start the task: it writes NEXT MODEL in progress.txt,
+ commits, and tells the owner "Switch to <model>, then send the start prompt."
+ A stronger model may do a lighter task only when the owner says so (it costs more credits).
+ A weaker model never does a heavier task.
+ Escalation: FLASH stops and asks for SONNET if the task needs changes in src/algorithms/ or
+ tests/algorithms/, if npm test or npm run build still fails after 2 fix attempts, or if it is unsure.
+ SONNET stops and asks for OPUS if a task turns out to need new algorithm design.
+ Flash trial rule: P1-T12 is the first FLASH task. The owner reviews its result closely
+ (rules check, look at it in the browser). If FLASH breaks the rules in AGENTS.md twice,
+ move the remaining FLASH tasks to SONNET and note it in progress.txt.
 
 ======================================================================
 TASK NOTES (read the note for your current task before starting it)
@@ -312,3 +326,4 @@ P1-T18 note: delete public/404.html and use src/pages/404.astro instead.
 P1-T04 note (API): solveLinear1D currently takes ONE stock length and buildResult uses that single length. Extend it to a stock list [{length, quantity}] (Infinity = unlimited) and let every open bar carry its own stockLength. When a new bar is needed, open the SHORTEST available stock that holds the piece. Reusable offcuts are extra stock entries with limited quantity. Keep a thin single-stock wrapper so the existing P1-T03 tests pass unchanged. Never use more bars of a length than its quantity; pieces that then do not fit go to unplaced.
 P1-T04 note (choosing the better result): with one stock length, FFD and BFD that use the same number of bars always have the same total waste, so the "less waste" tie-break never fires. Between equal-bar results prefer the layout with the largest single leftover piece (more reusable); keep BFD as the final tie-break.
 P1-T04 note (validation): validate.ts and linear1d.ts must use the same fit rule. With kerfAfterLast=false a piece equal to the stock length fits; with kerfAfterLast=true it does not. Check validate.ts agrees, or make both call one shared function.
+P1-T06 note: fuzz tests must run the REAL solver (solveLinear1DMultiStock) on seeded random jobs, pass each result through toDisplayResult, and check: no overlap, placed + unplaced = requested by quantity, per-bar length conserved, never more bars of a stock length than its quantity, and never worse than one piece per bar. Edge cases: empty pieces, one piece, kerf larger than every piece, quantity 500, duplicate stock entries. Only new dependency: @vitest/coverage-v8 (note it in progress.txt). Target 90% line coverage on src/algorithms. If a fuzz test finds a real solver bug, fix it and say so clearly.
