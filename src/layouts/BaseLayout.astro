@@ -28,6 +28,8 @@ const {
   description = t['site.tagline'],
   canonicalUrl,
 } = Astro.props;
+
+const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -88,7 +90,7 @@ const {
         <nav class="tool-nav" aria-label={t['nav.tools']}>
           <ul class="tool-nav__list" role="list">
             <li>
-              <a href={base('/linear')}>{t['nav.linearCutting']}</a>
+              <a href={base('/')} aria-current={currentPath === base('/') || currentPath === base('') ? "page" : undefined}>{t['nav.linearCutting']}</a>
             </li>
           </ul>
         </nav>

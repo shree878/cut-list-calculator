@@ -1,19 +1,22 @@
 LAST UPDATED: 2026-11-23
 PHASE: 1 Linear Cutting Calculator
-CURRENT TASK: P1-T07   STATUS: DONE
+CURRENT TASK: P1-T07 fix   STATUS: DONE
 MODEL NEEDED NOW: SONNET     NEXT MODEL CHANGE: (none until Phase 2)
 NEXT ACTION: P1-T08 (SONNET) - Stock + settings inputs: units toggle, stock length(s),
   kerf, advanced collapsed. Labels, units, hints, error text per DESIGN.md.
   Accept: keyboard-only use works; numeric keypad appears on phones.
 
 DONE (newest first, one line each):
+- P1-T07 fix: Home page "/" is the flagship Linear tool (decision D10).
+  Moved ToolLayout usage to src/pages/index.astro, deleted src/pages/linear.astro.
+  Header "Linear cutting" link points to base('/') with aria-current="page".
+  #how-to section has tabindex="-1" for focusability. smooth scrolling respects
+  prefers-reduced-motion in base.css. npm test ✓ (410), npm run build ✓ (1 page).
 - P1-T07: ToolLayout (src/layouts/ToolLayout.astro). Wraps BaseLayout.
   Slots: tool (first screen), how-to (#how-to anchor), notes.
   Title block: h1 + promise + "i How to use" ghost-link button → #how-to.
   How-to section below tool, anchored at #how-to, aria-labelledby heading.
-  Stub linear.astro page (src/pages/linear.astro) proves layout fits in first
-  screen at 360×640. Added 12 i18n keys (tool.*, linear.*). Header nav now
-  shows "Linear cutting" link. npm test ✓ (410), npm run build ✓ (2 pages).
+  Added 12 i18n keys (tool.*, linear.*). Header nav now shows "Linear cutting" link.
 - P1-T06: Test hardening. 216 new tests: 200 seeded fuzz (4 seeds × 50 jobs,
   mulberry32 PRNG, repeatable), 16 edge cases (empty pieces, one piece, kerf
   larger than every piece, quantity 500, stock duplicates, boundary fits).
@@ -91,11 +94,12 @@ DECISIONS:
   Cross-system round-trip tolerance: ≤3 metric units (0.3 mm), ≤1 imperial (1/64 in).
 - @vitest/coverage-v8 added for P1-T06 (only new dev dependency).
 - ToolLayout: title block uses --text-h2 (30 px) on mobile, --text-h1 (38 px) on 640+.
-  Slots: tool, how-to, notes. #how-to anchor on how-to section.
+  Slots: tool, how-to, notes. #how-to anchor on how-to section (tabindex="-1").
+- Home page "/" is flagship linear cutting tool (D10). No "/linear" route.
 
 KNOWN ISSUES / BLOCKERS:
 - Q2: Contact email or form for the About page (not blocking yet)
-- Q3: Home page hub or stays Linear tool? (decide at Phase 3)
+- Q3: Home page hub or stays Linear tool? (Resolved: D10 home page is the tool)
 
 NEXT MODEL: SONNET (P1-T08 through P1-T11, P1-T17)
 
