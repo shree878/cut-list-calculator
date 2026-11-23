@@ -1,10 +1,18 @@
-LAST UPDATED: 2026-11-22
+LAST UPDATED: 2026-11-23
 PHASE: 1 Linear Cutting Calculator
-CURRENT TASK: P1-T05   STATUS: DONE
-MODEL NEEDED NOW: OPUS     NEXT MODEL CHANGE: SONNET at P1-T07
-NEXT ACTION: P1-T06 (OPUS) - Test hardening: seeded fuzz tests, edge cases, 90% line coverage. Read TASK NOTES for P1-T06 in plan.txt first.
+CURRENT TASK: P1-T06   STATUS: DONE
+MODEL NEEDED NOW: SONNET     NEXT MODEL CHANGE: (none until Phase 2)
+NEXT ACTION: P1-T07 (SONNET) - Tool page template (ToolLayout). Read AGENTS.md session start, then do NEXT ACTION.
 
 DONE (newest first, one line each):
+- P1-T06: Test hardening. 216 new tests: 200 seeded fuzz (4 seeds × 50 jobs,
+  mulberry32 PRNG, repeatable), 16 edge cases (empty pieces, one piece, kerf
+  larger than every piece, quantity 500, stock duplicates, boundary fits).
+  All tests run solveLinear1DMultiStock → toDisplayResult and check: no overlap,
+  placed+unplaced=requested, per-bar length conserved, stock qty not exceeded,
+  never worse than trivial, display summary consistent. No bugs found.
+  @vitest/coverage-v8 added (only new dep). Coverage: 99.35% lines, 96% branches,
+  100% functions on src/algorithms/. npm test ✓ (410), npm run build ✓.
 - P1-T05: Results model (src/algorithms/linear1d-results.ts). toDisplayResult
   transforms LinearResult → DisplayResult with per-bar cuts in order, waste,
   summary totals (bars, stock material, used, kerf, waste, waste%), unplaced
@@ -59,7 +67,6 @@ IN PROGRESS / PARTIAL:
 - (nothing)
 
 TODO (next tasks):
-- P1-T06 (OPUS model)
 - P1-T07 onward (SONNET model — switch before starting)
 
 DECISIONS:
@@ -73,11 +80,12 @@ DECISIONS:
 - Theme toggle: Light + Dark only (no Auto button). First visit uses OS pref silently.
 - Units: internal metric = 0.1 mm (×10), internal imperial = 1/64 in (×64).
   Cross-system round-trip tolerance: ≤3 metric units (0.3 mm), ≤1 imperial (1/64 in).
+- @vitest/coverage-v8 added for P1-T06 (only new dev dependency).
 
 KNOWN ISSUES / BLOCKERS:
 - Q2: Contact email or form for the About page (not blocking yet)
 - Q3: Home page hub or stays Linear tool? (decide at Phase 3)
 
-NEXT MODEL: OPUS (needed through P1-T06)
+NEXT MODEL: SONNET (switch before starting P1-T07)
 
 DEPLOY: live at https://shree878.github.io/cut-list-calculator/ (verified 2026-11-22)
