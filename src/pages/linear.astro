@@ -1,0 +1,67 @@
+---
+/**
+ * src/pages/linear.astro — Linear Cutting Calculator tool page.
+ *
+ * Uses ToolLayout for the shared title block, "i How to use" button,
+ * and below-tool section structure.
+ *
+ * The tool slot is a placeholder until P1-T08 adds real inputs.
+ */
+import ToolLayout from '../layouts/ToolLayout.astro';
+import { base } from '../lib/base';
+import t from '../i18n/en.json';
+---
+
+<ToolLayout
+  title={t['linear.title']}
+  heading={t['linear.heading']}
+  promise={t['linear.promise']}
+  description={t['site.tagline']}
+>
+  <!-- Tool slot: calculator form + results (P1-T08 through P1-T12 will fill this) -->
+  <div slot="tool" class="tool-placeholder">
+    <p class="tool-placeholder__text">{t['index.comingSoon']}</p>
+  </div>
+
+  <!-- How-to slot: numbered steps -->
+  <ol slot="how-to" class="how-to-steps">
+    <li>{t['linear.howTo.step1']}</li>
+    <li>{t['linear.howTo.step2']}</li>
+    <li>{t['linear.howTo.step3']}</li>
+    <li>{t['linear.howTo.step4']}</li>
+  </ol>
+</ToolLayout>
+
+<style>
+  /* Placeholder panel — removed in P1-T08 when real inputs arrive */
+  .tool-placeholder {
+    background:    var(--color-surface);
+    border:        1px solid var(--color-border);
+    border-radius: var(--radius-m);
+    padding:       var(--space-6);
+    text-align:    center;
+    min-height:    var(--space-8);
+  }
+
+  .tool-placeholder__text {
+    font-size: var(--text-body);
+    color:     var(--color-text-muted);
+    margin:    0;
+  }
+
+  /* How-to numbered list */
+  .how-to-steps {
+    display:        flex;
+    flex-direction: column;
+    gap:            var(--space-3);
+    padding-inline-start: var(--space-5);
+    margin:         0;
+    max-width:      var(--prose-width);
+  }
+
+  .how-to-steps li {
+    font-size:   var(--text-body);
+    line-height: var(--leading-body);
+    color:       var(--color-text);
+  }
+</style>

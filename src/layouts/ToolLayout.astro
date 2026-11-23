@@ -1,0 +1,202 @@
+---
+/**
+ * ToolLayout.astro — shared layout for every calculator tool page.
+ *
+ * Page structure (fixed order, every tool copies it):
+ *   1. Title block: h1, one-line promise, "i How to use" button → #how-to
+ *   2. <slot name="tool"> — the tool form and results (tool-first: appears in first screen)
+ *   3. <slot name="how-to"> — numbered steps, anchored at #how-to
+ *   4. <slot name="notes"> — extra help text, related tools, etc.
+ *
+ * Props:
+ *   title        Page <title> (required). Format: "Page Name | Cut List Calculator"
+ *   heading      h1 text (required)
+ *   promise      One-line description shown under the h1 (required)
+ *   description  <meta description> (optional, falls back to site tagline)
+ *   canonicalUrl Full canonical URL (optional)
+ *
+ * Slots:
+ *   tool         The calculator form + results panel. Required.
+ *   how-to       Numbered how-to steps. Required for the anchor to make sense.
+ *   notes        Optional extra content below (help, related tools).
+ *   head-extra   Passed through to BaseLayout for JSON-LD etc.
+ */
+
+import BaseLayout from './BaseLayout.astro';
+import t from '../i18n/en.json';
+
+interface Props {
+  title: string;
+  heading: string;
+  promise: string;
+  description?: string;
+  canonicalUrl?: string;
+}
+
+const { title, heading, promise, description, canonicalUrl } = Astro.props;
+---
+
+<BaseLayout {title} {description} {canonicalUrl}>
+  <slot name="head-extra" slot="head-extra" />
+
+  <div class="tool-page">
+
+    <!-- Title block: h1 + promise + "i How to use" button -->
+    <div class="tool-page__title-block container">
+      <div class="tool-page__heading-row">
+        <h1 class="tool-page__h1">{heading}</h1>
+        <a
+          href="#how-to"
+          class="tool-page__how-to-btn"
+          aria-label={t['tool.howToAriaLabel']}
+        >
+          <!-- Info icon: outline circle-i, 2 px stroke, 24 px -->
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8"  x2="12" y2="8"  stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="12" y1="11" x2="12" y2="16"/>
+          </svg>
+          <span>{t['tool.howTo']}</span>
+        </a>
+      </div>
+      <p class="tool-page__promise">{promise}</p>
+    </div>
+
+    <!-- Tool area: form + results. No decorative wrapper — slot fills this. -->
+    <div class="tool-page__tool container">
+      <slot name="tool" />
+    </div>
+
+    <!-- Below-tool sections (after the fold) -->
+
+    <!-- How-to section: numbered steps -->
+    <section
+      id="how-to"
+      class="tool-page__section tool-page__section--how-to container"
+      aria-labelledby="how-to-heading"
+    >
+      <h2 id="how-to-heading" class="tool-page__section-heading">
+        {t['tool.howToHeading']}
+      </h2>
+      <slot name="how-to" />
+    </section>
+
+    <!-- Notes / related tools -->
+    <div class="tool-page__section container">
+      <slot name="notes" />
+    </div>
+
+  </div>
+</BaseLayout>
+
+<style>
+  /* ===== Page shell ===== */
+  .tool-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-7);    /* 48 px between sections */
+    padding-block-end: var(--space-8);
+  }
+
+  /* ===== Title block ===== */
+  .tool-page__title-block {
+    padding-block-start: var(--space-5);  /* 24 px top — keep tool in first screen */
+    padding-block-end:   var(--space-4);  /* 16 px before tool */
+  }
+
+  .tool-page__heading-row {
+    display:     flex;
+    align-items: center;
+    gap:         var(--space-4);
+    flex-wrap:   wrap;
+  }
+
+  .tool-page__h1 {
+    font-size:   var(--text-h2);    /* 30 px — compact on mobile, full h1 on desktop */
+    font-weight: var(--weight-heading);
+    line-height: var(--leading-heading);
+    color:       var(--color-text);
+    margin:      0;
+  }
+
+  @media (min-width: 640px) {
+    .tool-page__h1 {
+      font-size: var(--text-h1);  /* 38 px on tablet and up */
+    }
+  }
+
+  .tool-page__promise {
+    font-size:   var(--text-body);
+    color:       var(--color-text-muted);
+    margin:      var(--space-2) 0 0;
+    max-width:   var(--prose-width);
+    line-height: var(--leading-body);
+  }
+
+  /* ===== "i How to use" button ===== */
+  .tool-page__how-to-btn {
+    display:         inline-flex;
+    align-items:     center;
+    gap:             var(--space-2);
+    min-height:      var(--tap-target-min);   /* 48 px tap target */
+    padding-inline:  var(--space-3);
+    padding-block:   var(--space-2);
+    font-size:       var(--text-small);       /* 16 px */
+    font-weight:     var(--weight-label);
+    color:           var(--color-brand);
+    text-decoration: none;
+    border:          1px solid var(--color-brand);
+    border-radius:   var(--radius-s);
+    white-space:     nowrap;
+    flex-shrink:     0;
+    transition:
+      background     var(--duration-fast) var(--easing),
+      color          var(--duration-fast) var(--easing);
+  }
+
+  .tool-page__how-to-btn:hover {
+    background: var(--color-brand);
+    color:      var(--color-on-brand);
+  }
+
+  .tool-page__how-to-btn:focus-visible {
+    outline:        var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+
+  /* ===== Tool area ===== */
+  .tool-page__tool {
+    /* No extra padding — the slot content controls its own spacing */
+  }
+
+  /* ===== Below-tool sections ===== */
+  .tool-page__section {
+    display:        flex;
+    flex-direction: column;
+    gap:            var(--space-4);
+  }
+
+  .tool-page__section--how-to {
+    border-top:  1px solid var(--color-border);
+    padding-block-start: var(--space-7);  /* 48 px visual separation */
+  }
+
+  .tool-page__section-heading {
+    font-size:   var(--text-h3);
+    font-weight: var(--weight-heading);
+    line-height: var(--leading-heading);
+    color:       var(--color-text);
+    margin:      0;
+  }
+</style>

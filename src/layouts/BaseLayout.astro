@@ -84,10 +84,12 @@ const {
           <span class="site-logo__text">{t['site.name']}</span>
         </a>
 
-        <!-- Tool switcher: populated as tools go live (empty until P1) -->
+        <!-- Tool switcher: live tools only -->
         <nav class="tool-nav" aria-label={t['nav.tools']}>
           <ul class="tool-nav__list" role="list">
-            <!-- P1 will add: <li><a href={base('/linear')} aria-current="page">Linear cutting</a></li> -->
+            <li>
+              <a href={base('/linear')}>{t['nav.linearCutting']}</a>
+            </li>
           </ul>
         </nav>
 

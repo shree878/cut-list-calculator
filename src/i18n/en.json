@@ -6,6 +6,7 @@
   "nav.themeLight": "Light",
   "nav.themeDark": "Dark",
   "nav.themeLabel": "Colour scheme",
+  "nav.linearCutting": "Linear cutting",
   "footer.navLabel": "Site",
   "footer.about": "About",
   "footer.help": "Help",
@@ -13,5 +14,15 @@
   "footer.learnMore": "Learn more about this site",
   "footer.privacy_note": "Calculations run in your browser. Nothing is uploaded.",
   "index.heading": "Cut List Calculator",
-  "index.comingSoon": "Coming soon."
+  "index.comingSoon": "Coming soon.",
+  "tool.howTo": "How to use",
+  "tool.howToAriaLabel": "How to use this calculator",
+  "tool.howToHeading": "How to use",
+  "linear.title": "Linear Cutting Calculator | Cut List Calculator",
+  "linear.heading": "Linear Cutting Calculator",
+  "linear.promise": "Enter your stock lengths and pieces, get an efficient cut layout instantly.",
+  "linear.howTo.step1": "Enter the stock bar length (and kerf if needed) in the Settings section.",
+  "linear.howTo.step2": "Add each piece type: its length and how many copies you need.",
+  "linear.howTo.step3": "Press Calculate to see the cut layout and waste summary.",
+  "linear.howTo.step4": "Check the diagram or cut list, then verify measurements before cutting."
 }

@@ -1,10 +1,19 @@
 LAST UPDATED: 2026-11-23
 PHASE: 1 Linear Cutting Calculator
-CURRENT TASK: P1-T06   STATUS: DONE
+CURRENT TASK: P1-T07   STATUS: DONE
 MODEL NEEDED NOW: SONNET     NEXT MODEL CHANGE: (none until Phase 2)
-NEXT ACTION: P1-T07 (SONNET) - Tool page template (ToolLayout). Read AGENTS.md session start, then do NEXT ACTION.
+NEXT ACTION: P1-T08 (SONNET) - Stock + settings inputs: units toggle, stock length(s),
+  kerf, advanced collapsed. Labels, units, hints, error text per DESIGN.md.
+  Accept: keyboard-only use works; numeric keypad appears on phones.
 
 DONE (newest first, one line each):
+- P1-T07: ToolLayout (src/layouts/ToolLayout.astro). Wraps BaseLayout.
+  Slots: tool (first screen), how-to (#how-to anchor), notes.
+  Title block: h1 + promise + "i How to use" ghost-link button → #how-to.
+  How-to section below tool, anchored at #how-to, aria-labelledby heading.
+  Stub linear.astro page (src/pages/linear.astro) proves layout fits in first
+  screen at 360×640. Added 12 i18n keys (tool.*, linear.*). Header nav now
+  shows "Linear cutting" link. npm test ✓ (410), npm run build ✓ (2 pages).
 - P1-T06: Test hardening. 216 new tests: 200 seeded fuzz (4 seeds × 50 jobs,
   mulberry32 PRNG, repeatable), 16 edge cases (empty pieces, one piece, kerf
   larger than every piece, quantity 500, stock duplicates, boundary fits).
@@ -55,7 +64,7 @@ DONE (newest first, one line each):
   nav.themeAuto and footer.guides from en.json. npm test ✓, npm run build ✓.
 - P0-T05: live site verified at https://shree878.github.io/cut-list-calculator/ — DONE.
 - P0-T06: Verification pass — en.json and base.ts confirmed complete. Fixed 3
-  hard-coded strings. npm test ✓, npm run build ✓ (1 page).
+  hard-coded strings. npm test ✓, npm run build ✓.
 - P0-T05: .github/workflows/deploy.yml. public/404.html and public/favicon.svg added.
 - P0-T04: BaseLayout.astro, theme toggle, header, footer. src/lib/base.ts.
 - P0-T03: tokens.css and base.css from DESIGN.md.
@@ -67,7 +76,7 @@ IN PROGRESS / PARTIAL:
 - (nothing)
 
 TODO (next tasks):
-- P1-T07 onward (SONNET model — switch before starting)
+- P1-T08 onward (SONNET model)
 
 DECISIONS:
 - Astro 5 static + TypeScript strict + Vitest 2 + GitHub Actions to GitHub Pages
@@ -81,11 +90,13 @@ DECISIONS:
 - Units: internal metric = 0.1 mm (×10), internal imperial = 1/64 in (×64).
   Cross-system round-trip tolerance: ≤3 metric units (0.3 mm), ≤1 imperial (1/64 in).
 - @vitest/coverage-v8 added for P1-T06 (only new dev dependency).
+- ToolLayout: title block uses --text-h2 (30 px) on mobile, --text-h1 (38 px) on 640+.
+  Slots: tool, how-to, notes. #how-to anchor on how-to section.
 
 KNOWN ISSUES / BLOCKERS:
 - Q2: Contact email or form for the About page (not blocking yet)
 - Q3: Home page hub or stays Linear tool? (decide at Phase 3)
 
-NEXT MODEL: SONNET (switch before starting P1-T07)
+NEXT MODEL: SONNET (P1-T08 through P1-T11, P1-T17)
 
 DEPLOY: live at https://shree878.github.io/cut-list-calculator/ (verified 2026-11-22)
