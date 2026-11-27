@@ -1,8 +1,8 @@
 LAST UPDATED: 2026-11-27
 PHASE: 1 Linear Cutting Calculator
 CURRENT TASK: P1-T08   STATUS: DONE
-MODEL NEEDED NOW: FLASH high     NEXT MODEL CHANGE: (none until SONNET for P1-T10)
-NEXT ACTION: P1-T09 (FLASH:high) - Pieces row editor: length, quantity, add, duplicate,
+MODEL NEEDED NOW: HYDROGEN high     NEXT MODEL CHANGE: (none until SONNET for P1-T10)
+NEXT ACTION: P1-T09 (HYDROGEN:high) - Pieces row editor: length, quantity, add, duplicate,
   delete; keeps data when editing; "Try sample" button. Import linear-state.ts for
   shared state. Dispatch 'linear-state-change' event when pieces change.
   Accept: works with 50+ rows without slowdown; empty state is helpful.
@@ -85,6 +85,6 @@ KNOWN ISSUES / BLOCKERS:
 - Pre-existing: BaseLayout.astro line 299 has `3px solid transparent` (nav underline
   indicator). Not introduced in P1-T08. Will fix in P1-T15 accessibility pass.
 
-NEXT MODEL: FLASH high for P1-T09. Then SONNET for P1-T10.
+NEXT MODEL: HYDROGEN high for P1-T09. Then SONNET for P1-T10.
 
 DEPLOY: live at https://shree878.github.io/cut-list-calculator/ (verified 2026-11-22)

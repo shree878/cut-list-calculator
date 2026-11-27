@@ -5,14 +5,14 @@ Astro site on GitHub Pages. Tool-first short pages, very readable for adults 30 
 dark mode, offline-capable, professional look. All maths runs in the browser.
 
 ## SESSION START (do exactly this, nothing more)
-0. The owner's first message names the active model (OPUS, SONNET, or FLASH with its effort low/med/high). Remember it.
+0. The owner's first message names the active model (OPUS, SONNET, or HYDROGEN with its effort low/med/high). Remember it.
 1. Read progress.txt.
 2. Run `git status` and `git log -5 --oneline`. If they disagree with progress.txt, trust git for code, then fix progress.txt.
 3. Run `npm test` once (skip if no tests exist yet).
 4. Read ONLY the plan.txt section for the current task, and the 1 or 2 skills it needs.
-5. MODEL CHECK: find the current task's tag ([OPUS], [SONNET] or [FLASH:low|med|high]; [OWNER] tasks are done by the owner) in plan.txt. If it differs from the active model, do NOT start it: set NEXT MODEL in progress.txt, commit, and reply only "Switch to <model>, then send the start prompt." Never switch models silently or continue on the wrong model.
+5. MODEL CHECK: find the current task's tag ([OPUS], [SONNET] or [HYDROGEN:low|med|high|xhigh]; [OWNER] tasks are done by the owner) in plan.txt. If it differs from the active model, do NOT start it: set NEXT MODEL in progress.txt, commit, and reply only "Switch to <model>, then send the start prompt." Never switch models silently or continue on the wrong model.
 6. Do the NEXT ACTION. Do not re-plan, re-explore the repo, or redo finished work.
-Start prompt the owner will type: "Model: <OPUS | SONNET | FLASH low/med/high>. Follow AGENTS.md session start, then do NEXT ACTION in progress.txt."
+Start prompt the owner will type: "Model: <OPUS | SONNET | HYDROGEN low/med/high>. Follow AGENTS.md session start, then do NEXT ACTION in progress.txt."
 
 ## SESSION END / EVERY CHECKPOINT
 After each task or working sub-step: run `npm test` and `npm run build`; rewrite progress.txt
@@ -43,7 +43,7 @@ Astro (static) + TypeScript strict + plain CSS tokens + Vitest. Node LTS.
 - public/favicon.svg                              brand mark favicon (SVG)
 - public/404.html                                 fallback 404 page
 
-## Extra rules when the active model is FLASH
+## Extra rules when the active model is HYDROGEN
 - Do only the current task. Do not edit src/algorithms/, tests/algorithms/, DESIGN.md or tokens.css. If a token is missing, stop and ask the owner.
 - Before every commit run these two checks and fix every hit that is not a media query or a 1px border:
   grep -rnE '#[0-9A-Fa-f]{3,8}\b' src/pages src/layouts src/components

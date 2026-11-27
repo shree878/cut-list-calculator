@@ -101,7 +101,7 @@ guillotine-aware layouts, printable cut lists. Re-check competitors before Phase
 ======================================================================
 5. PHASES AND TASKS
 ======================================================================
-Task format: ID | goal | acceptance check. Tags: [OPUS] [SONNET] [FLASH:low|med|high] [OWNER]=done by the owner, no agent. One task = one agent session.
+Task format: ID | goal | acceptance check. Tags: [OPUS] [SONNET] [HYDROGEN:low|med|high|xhigh] [OWNER]=done by the owner, no agent. One task = one agent session.
 Layers always go in this order: Foundations, Logic, UI, Output, Quality,
 Discovery, Launch. Never skip down the stack.
 
@@ -150,13 +150,13 @@ P1-T06 [OPUS] DONE | Test hardening: seeded fuzz tests, edge cases, 90% line cov
         Accept: coverage target met; npm test green.
 
 Layer: UI
-P1-T07 [SONNET] | Tool page template (ToolLayout) with title block, "i How to use" button
+P1-T07 [SONNET] DONE | Tool page template (ToolLayout) with title block, "i How to use" button
         and anchor target #how-to, below-tool sections in the fixed order.
         Accept: tool starts inside the first screen at 360 x 640.
-P1-T08 [SONNET] | Stock + settings inputs: units toggle, stock length(s), kerf, advanced
+P1-T08 [SONNET] DONE | Stock + settings inputs: units toggle, stock length(s), kerf, advanced
         collapsed. Labels, units, hints, error text per DESIGN.md.
         Accept: keyboard-only use works; numeric keypad appears on phones.
-P1-T09 [FLASH:high] | Pieces row editor: length, quantity, add, duplicate, delete; keeps data
+P1-T09 [HYDROGEN:high] | Pieces row editor: length, quantity, add, duplicate, delete; keeps data
         when editing; "Try sample" button.
         Accept: works with 50+ rows without slowdown; empty state is helpful.
 P1-T10 [SONNET] | Calculate flow and results summary, partial and error states, polite
@@ -165,39 +165,39 @@ P1-T10 [SONNET] | Calculate flow and results summary, partial and error states, 
 P1-T11 [SONNET] | SVG diagram: scaled bars, numbered pieces, sizes, waste hatch, cut order,
         title/description, scrolls inside its frame.
         Accept: readable in black and white; table equivalent exists (P1-T12).
-P1-T12 [FLASH:med] | Cut list table (numbered cuts per bar) and "Verify before cutting" note.
+P1-T12 [HYDROGEN:med] | Cut list table (numbered cuts per bar) and "Verify before cutting" note.
         Accept: matches the diagram exactly; note visible beside results.
 
 Layer: output
-P1-T13 [FLASH:med] | Print stylesheet (diagram + cut list + summary, no chrome).
+P1-T13 [HYDROGEN:med] | Print stylesheet (diagram + cut list + summary, no chrome).
         Accept: prints on one A4/Letter page for a typical job, in black and white.
-P1-T14 [FLASH:high] | Copy-link share URL that restores inputs; Copy as text.
+P1-T14 [HYDROGEN:xhigh] | Copy-link share URL that restores inputs; Copy as text.
         Accept: opening the link in a new browser reproduces the same result.
 
 Layer: quality
-P1-T15 [FLASH:high] | Accessibility pass per accessibility skill (keyboard, contrast in both
+P1-T15 [HYDROGEN:xhigh] | Accessibility pass per accessibility skill (keyboard, contrast in both
         themes, 200% zoom, 320 px width, Lighthouse accessibility 95+ in CI).
         Accept: results recorded in progress.txt.
-P1-T16 [FLASH:med] | Performance pass: JS under about 100 KB gzipped for the tool page,
+P1-T16 [HYDROGEN:med] | Performance pass: JS under about 100 KB gzipped for the tool page,
         no layout shift, first paint under 2 s on mid-range phone over 4G.
         Accept: Lighthouse CI numbers recorded.
-P1-T17 [SONNET] | PWA offline: manifest, icons, service worker (versioned cache), update
+P1-T17 [HYDROGEN:xhigh] | PWA offline: manifest, icons, service worker (versioned cache), update
         notice, quiet install button.
         Accept: offline reload of every page and a calculation works; update
         test passes.
 
 Layer: discovery
-P1-T18 [FLASH:med] | About, Help (full how-to, FAQ, limits, kerf explained), Privacy, 404.
+P1-T18 [HYDROGEN:med] | About, Help (full how-to, FAQ, limits, kerf explained), Privacy, 404.
         Footer "Learn more" link leads to About.
         Accept: all linked from footer; no tool page text gets longer.
-P1-T19 [FLASH:med] | SEO basics: unique title and description, canonical, Open Graph, JSON-LD,
+P1-T19 [HYDROGEN:med] | SEO basics: unique title and description, canonical, Open Graph, JSON-LD,
         sitemap.xml, robots.txt, breadcrumbs.
         Accept: validators show no errors; URLs respect the base path.
-P1-T20 [FLASH:med] | Preset pages: pipe and lumber (own defaults, copy, FAQ).
+P1-T20 [HYDROGEN:med] | Preset pages: pipe and lumber (own defaults, copy, FAQ).
         Accept: pages are clearly distinct and useful, not thin duplicates.
 
 Layer: launch
-P1-T21 [FLASH:low] | Deploy, smoke test on a real phone (home loads, calculation, offline,
+P1-T21 [HYDROGEN:low] | Deploy, smoke test on a real phone (home loads, calculation, offline,
         dark mode, print), record in progress.txt.
 P1-T22 [OWNER] | Show to 5 to 10 real carpenters/tailors/DIYers; record feedback in
         section 9 of this file; decide fixes before Phase 2.
@@ -215,13 +215,13 @@ P2-T01 [OPUS] | Guillotine algorithm with split and choice rules, several combin
         (Opus session 1 does P2-T01 AND P2-T02 together: grain and rotation are part of the solver search.)
 P2-T02 [OPUS] merged into P2-T01 | Grain and rotation per piece; offcuts above a minimum size reported.
 P2-T03 [OPUS] (Opus session 2) | Ordered cut sequence (rip then crosscut) output.
-P2-T04 [FLASH:high] | Tests: overlap, containment, conservation, guillotine-compatibility,
+P2-T04 [HYDROGEN:xhigh] | Tests: overlap, containment, conservation, guillotine-compatibility,
         grain lock, fuzz, known answers.
-P2-T05 [FLASH:high] | UI: width x length rows, stock sheet size(s), grain toggle, advanced section;
+P2-T05 [HYDROGEN:xhigh] | UI: width x length rows, stock sheet size(s), grain toggle, advanced section;
         same page template.
-P2-T06 [FLASH:high] | Sheet diagram with numbered cuts, offcuts, dimensions; print layout.
-P2-T07 [FLASH:med] | Page at /plywood-cut-list-calculator/, nav tab goes live, SEO, Help updates.
-P2-T08 [FLASH:med] | Accessibility, performance, offline re-check; deploy; feedback round.
+P2-T06 [HYDROGEN:xhigh] | Sheet diagram with numbered cuts, offcuts, dimensions; print layout.
+P2-T07 [HYDROGEN:med] | Page at /plywood-cut-list-calculator/, nav tab goes live, SEO, Help updates.
+P2-T08 [HYDROGEN:med] | Accessibility, performance, offline re-check; deploy; feedback round.
 Definition of Done: same list as Phase 1 plus guillotine-compatible by default.
 Parked inside Phase 2: advanced "any-cut" (MaxRects) mode, only if feedback asks.
 
@@ -231,7 +231,7 @@ PHASE 3  TILES
 P3-T01..: area, waste % (editable defaults), grout width, box rounding, straight
 and diagonal lay; simple layout diagram; tests; page; SEO; deploy; feedback.
 (Break into tasks when Phase 3 starts.)
-Model plan: everything FLASH:high (logic with hand-verified tests, UI and diagram copying the Phase 1 patterns); page, SEO, checks FLASH:med. If Flash fails twice on a task, use one reserve Sonnet session.
+Model plan: everything HYDROGEN: logic and its hand-verified tests at xhigh, UI and diagram at xhigh (copy the Phase 1 patterns), page, SEO, checks at med. If Hydrogen fails twice on a task, use one reserve Sonnet session.
 
 ----------------------------------------------------------------------
 PHASE 4  FABRIC
@@ -239,7 +239,7 @@ PHASE 4  FABRIC
 P4-T01..: fixed roll width strip packing, nap/pattern direction, seam allowance,
 yardage and metres output; tests; page; SEO; deploy; feedback.
 (Break into tasks when Phase 4 starts.)
-Model plan: logic + tests = Opus session 3 (if no Opus session was needed for an emergency solver fix; otherwise one Sonnet reserve session); UI and diagram FLASH:high; page, SEO, checks FLASH:med.
+Model plan: fabric logic + tests = HYDROGEN:xhigh first. If its fuzz tests or hand checks fail twice, use Opus session 3. UI and diagram HYDROGEN:xhigh; page, SEO, checks HYDROGEN:med.
 
 ----------------------------------------------------------------------
 PHASE 5  GUIDES AND GROWTH
@@ -295,53 +295,53 @@ consent handling must be reviewed first.
 11. MODEL SWITCHING AND CLAUDE BUDGET (Antigravity cannot switch models by itself)
 ======================================================================
  Models: OPUS = Claude Opus 4.6.  SONNET = Claude Sonnet 4.6.
-         FLASH = Gemini 3.8 Flash, run at low, med or high effort (tag [FLASH:low|med|high]).
- Budget reality: Flash is almost unlimited. Claude is scarce:
+         HYDROGEN = Gemini 4 Hydrogen (Google, released 12 Nov 2026), effort low, med, high or xhigh
+         (tag [HYDROGEN:low|med|high|xhigh]).
+ What is known: Hydrogen is Google's fast "flash-class" model, derived from Gemini 4 Carbon and
+ positioned below Carbon and Argon. It is not proven on THIS project. Treat it as capable but
+ unverified: tests, the rules checks and the owner's review decide whether it keeps a task.
+ Budget reality: Hydrogen is almost unlimited. Claude is scarce:
    OPUS   max 3 sessions from now on.
-   SONNET max 7 sessions (5 planned + 2 reserve).
+   SONNET 2 planned sessions left (P1-T10, P1-T11) + 1 to 3 reserve (P1-T07 and P1-T08 are done).
  A "session" = one task (a second small task only if the first leaves over half the credits).
- So Flash does everything that a strong test or an existing pattern can protect.
 
  CLAUDE SESSION PLAN
   Opus 1    P2-T01 + P2-T02  guillotine sheet solver with grain and rotation (hardest logic).
   Opus 2    P2-T03           ordered cut sequence (rip then crosscut).
-  Opus 3    Phase 4 fabric logic. If a real solver bug appears earlier, use Opus 3 for the bug and
-            give fabric logic to a reserve Sonnet session.
-  Sonnet 1  P1-T07  tool page template (all later pages copy it).
-  Sonnet 2  P1-T08  stock and settings inputs, units toggle (the drift note applies).
+  Opus 3    RESERVE / FALLBACK: a real solver bug, or fabric logic if Hydrogen fails it twice.
   Sonnet 3  P1-T10  calculate flow: wire solver and results to the page, error codes to text.
-  Sonnet 4  P1-T11  SVG diagram (all later diagrams copy it).
-  Sonnet 5  P1-T17  PWA offline (service worker bugs are hard to spot).
-  Sonnet 6-7 RESERVE: use only when a Flash task fails twice, or for P2-T06 / Phase 3 if Flash's work is poor.
+  Sonnet 4  P1-T11  SVG diagram (every later diagram copies it; visual quality matters most here).
+  Sonnet reserve (1 to 3): a Hydrogen task that failed twice, or P2-T06 / Phase 3 if the Hydrogen result is poor.
 
- FLASH EFFORT: low = config, copy, deploy notes. med = default. high = state handling, audits,
- tests, logic that copies an existing pattern.
- Why it is safe to give Flash this much: every Flash task is guarded by (1) automated tests,
- (2) the grep rules check in AGENTS.md, (3) the owner's visual check in the browser, and
- (4) free review: the owner uploads key files to the planning chat before the next task.
- Mandatory review points (upload the files): after P1-T09, P1-T14, P1-T15, P2-T04, and
- after each Flash-built calculator logic module.
+ EVERYTHING ELSE = HYDROGEN, including the offline mode (P1-T17), the share link, the audits,
+ all static pages, the Phase 2 tests, UI and diagram, Phase 3 tiles and Phase 4 UI.
+ Effort: low = config, copy, deploy notes. med = default. high = UI state and tests that copy a
+ pattern. xhigh = logic, audits, offline mode, anything that is hard to see is wrong.
+ Why this is safe: every Hydrogen task is guarded by (1) automated tests, (2) the grep rules
+ check in AGENTS.md, (3) the owner's visual check in the browser, and (4) free review: the owner
+ uploads key files to the planning chat before the next task.
+ Mandatory review points (upload the files): after P1-T09, P1-T14, P1-T15, P1-T17, P2-T04,
+ and after each Hydrogen-built calculator logic module.
 
- Rules for Flash tasks that write tests: expected values must be worked out by hand with the
+ Rules for Hydrogen tasks that write tests: expected values must be worked out by hand with the
  arithmetic in a comment. Never copy an expected value from the code's own output.
- Flash tasks that copy a pattern must name the file they copied from in progress.txt.
+ Hydrogen tasks that copy a pattern must name the file they copied from in progress.txt.
 
- Order and switches: Phase 1: SONNET T07,T08 -> FLASH T09 -> SONNET T10,T11 -> FLASH T12..T16 ->
- SONNET T17 -> FLASH T18..T21 -> OWNER T22.   Phase 2: OPUS (T01+T02, then T03) -> FLASH T04..T08.
- Phases 3 and 4 follow the model plan under each phase.
+ Order and switches: Phase 1: HYDROGEN T09 -> SONNET T10, T11 -> HYDROGEN T12..T21 -> OWNER T22.
+ Phase 2: OPUS (T01+T02, then T03) -> HYDROGEN T04..T08. Phases 3 and 4 follow the model plan under each phase.
 
- Protocol: the owner states the active model (and FLASH effort) in the first message of a session
+ Protocol: the owner states the active model (and HYDROGEN effort) in the first message of a session
  (see AGENTS.md). Before starting a task, the agent compares it with the task tag.
  If they differ, the agent does not start the task: it writes NEXT MODEL in progress.txt,
  commits, and tells the owner "Switch to <model>, then send the start prompt."
  A stronger model does a lighter task only when the owner says so. A weaker model never does a heavier one.
- Escalation: FLASH stops and asks for help (a reserve Sonnet session) if it needs changes in
+ Escalation: HYDROGEN stops and asks for help (a reserve Sonnet session) if it needs changes in
  src/algorithms/ or tests/algorithms/ beyond its own task, if npm test or npm run build still
  fails after 2 fix attempts, or if it is unsure. SONNET stops and asks for OPUS only for new
  algorithm design.
- Flash trial: P1-T09 is the first FLASH task. The owner reviews it closely (rules check,
- browser, upload to the planning chat). If FLASH breaks the rules in AGENTS.md twice, spend a
- reserve Sonnet session on the failing task and tighten the prompt.
+ Trial: P1-T09 is the first HYDROGEN task and P1-T17 the first xhigh logic-like task. The owner
+ reviews them closely. If Hydrogen breaks the rules in AGENTS.md twice, spend a reserve Sonnet
+ session on the failing task and tighten the prompt.
 
 ======================================================================
 TASK NOTES (read the note for your current task before starting it)
