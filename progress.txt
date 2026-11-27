@@ -1,12 +1,22 @@
-LAST UPDATED: 2026-11-23
+LAST UPDATED: 2026-11-27
 PHASE: 1 Linear Cutting Calculator
-CURRENT TASK: P1-T07 fix   STATUS: DONE
-MODEL NEEDED NOW: SONNET     NEXT MODEL CHANGE: (none until Phase 2)
-NEXT ACTION: P1-T08 (SONNET) - Stock + settings inputs: units toggle, stock length(s),
-  kerf, advanced collapsed. Labels, units, hints, error text per DESIGN.md.
-  Accept: keyboard-only use works; numeric keypad appears on phones.
+CURRENT TASK: P1-T08   STATUS: DONE
+MODEL NEEDED NOW: FLASH high     NEXT MODEL CHANGE: (none until SONNET for P1-T10)
+NEXT ACTION: P1-T09 (FLASH:high) - Pieces row editor: length, quantity, add, duplicate,
+  delete; keeps data when editing; "Try sample" button. Import linear-state.ts for
+  shared state. Dispatch 'linear-state-change' event when pieces change.
+  Accept: works with 50+ rows without slowdown; empty state is helpful.
 
 DONE (newest first, one line each):
+- P1-T08: Stock + settings inputs in home page tool slot. Units toggle (mm/cm/m/in/ft,
+  default from browser locale, saved to localStorage). Stock rows: length + quantity
+  ("unlimited" default), add/remove rows, min 1 row. Kerf field. Advanced settings
+  <details> collapsed: kerfAfterLast switch + plain kerf rule statement.
+  State module: src/lib/linear-state.ts (pure functions, immutable updates).
+  38 new tests in tests/lib/linear-state.test.ts. All strings from en.json (31 new keys).
+  New tokens in tokens.css: switch geometry, flex basis, accent border, kerf field width.
+  grep checks clean (only pre-existing BaseLayout 3px border). npm test ✓ (448),
+  npm run build ✓ (7.08 kB / 2.56 kB gzip for LinearSettings script).
 - P1-T07 fix: Home page "/" is the flagship Linear tool (decision D10).
   Moved ToolLayout usage to src/pages/index.astro, deleted src/pages/linear.astro.
   Header "Linear cutting" link points to base('/') with aria-current="page".
@@ -33,53 +43,20 @@ DONE (newest first, one line each):
   arithmetic), invariant (no overlap, all pieces accounted by sourceIndex,
   per-bar length conserved), formatter spy test. npm test ✓ (194), build ✓.
 - P1-T04 fix: pickBetter new comparison order: (1) fewer unplaced pieces,
-  (2) smaller total stock material (sum bar.stockLength), (3) fewer bars,
-  (4) larger single leftover, (5) prefer BFD. Removed redundant total-waste
-  compare. Exported pickBetter. 4 new hand-built unit tests (makeBar/makeResult
-  helpers, arithmetic in comments). npm test ✓ (178), npm run build ✓.
-- P1-T04: Multi-stock support (src/algorithms/linear1d.ts). solveLinear1DMultiStock
-  accepts [{length, quantity}] stocks (Infinity=unlimited). Picks shortest
-  stock that fits. Limited quantities enforced (exhausted → next stock or
-  unplaced). Offcuts modelled as limited-qty stock entries. Duplicate stock
-  entries merged. pickBetter tie-break: fewer bars → less waste → largest
-  single leftover → BFD. solveLinear1D kept as thin wrapper. 19 new tests
-  (known-answer, invariant, determinism), all expected values hand-verified
-  with arithmetic in comments. Stock quantity invariant checked in every
-  multi-stock test. npm test ✓ (174), npm run build ✓.
-- P1-T03: 1D linear cutting algorithm (src/algorithms/linear1d.ts). FFD + BFD,
-  keeps better result. Kerf rule: n−1 cuts default, n cuts if kerfAfterLast=true.
-  Deterministic, pure TS. 25 known-answer + invariant + edge-case tests, all
-  expected values hand-verified with arithmetic in comments. npm test ✓ (155),
-  npm run build ✓.
-- P1-T02: Input validation module (src/algorithms/validate.ts). Stock > 0,
-  kerf >= 0, piece > 0, quantities >= 1, total pieces <= 500, fit check (piece
-  longer than every stock → "cannot fit"). 43 tests, all invalid cases covered
-  with plain-language messages. npm test ✓ (130), npm run build ✓.
-- P1-T01: Units module (src/lib/units.ts). Parse decimals and inch fractions
-  (mixed numbers, bare fractions), convert metric↔imperial via exact 127/32
-  ratio, integer internal units (0.1 mm / 1/64 in), format output (metric
-  decimals, reduced fractions, feet-and-inches). 87 tests (parseLength,
-  formatLength, convertToSystem, round-trips). npm test ✓, npm run build ✓.
-- P0-fix: Theme toggle: removed Auto option (Light + Dark only). First visit still
-  follows prefers-color-scheme with no flash; clicking saves choice to localStorage.
-  Footer: removed Guides link (page does not exist until Phase 5; kept About, Help,
-  Privacy). Updated DESIGN.md sections 3, 8 (components 1 and 14). Removed
-  nav.themeAuto and footer.guides from en.json. npm test ✓, npm run build ✓.
-- P0-T05: live site verified at https://shree878.github.io/cut-list-calculator/ — DONE.
-- P0-T06: Verification pass — en.json and base.ts confirmed complete. Fixed 3
-  hard-coded strings. npm test ✓, npm run build ✓.
-- P0-T05: .github/workflows/deploy.yml. public/404.html and public/favicon.svg added.
-- P0-T04: BaseLayout.astro, theme toggle, header, footer. src/lib/base.ts.
-- P0-T03: tokens.css and base.css from DESIGN.md.
-- P0-T02: Folder map in AGENTS.md matches real tree.
-- P0-T01: Astro 5, TypeScript strict, Vitest 2, npm scripts, smoke test.
-- P0-T00: project control files.
+  (2) smaller total stock material, (3) fewer bars, (4) larger single leftover,
+  (5) prefer BFD. Removed redundant total-waste compare. 4 new tests.
+- P1-T04: Multi-stock support. solveLinear1DMultiStock. Limited/unlimited qty.
+  Duplicate stock entries merged. 19 new tests. npm test ✓ (174), build ✓.
+- P1-T03: 1D linear cutting algorithm. FFD + BFD. Kerf n-1 or n rule. 25 tests.
+- P1-T02: Input validation module (src/algorithms/validate.ts). 43 tests.
+- P1-T01: Units module (src/lib/units.ts). 87 tests.
+- P0-fix through P0-T06: site scaffold, deploy, verification.
 
 IN PROGRESS / PARTIAL:
 - (nothing)
 
 TODO (next tasks):
-- P1-T08 onward (SONNET model)
+- P1-T09 onward
 
 DECISIONS:
 - Astro 5 static + TypeScript strict + Vitest 2 + GitHub Actions to GitHub Pages
@@ -96,11 +73,18 @@ DECISIONS:
 - ToolLayout: title block uses --text-h2 (30 px) on mobile, --text-h1 (38 px) on 640+.
   Slots: tool, how-to, notes. #how-to anchor on how-to section (tabindex="-1").
 - Home page "/" is flagship linear cutting tool (D10). No "/linear" route.
+- State pattern (D11): src/lib/linear-state.ts is the single source of truth for all
+  linear tool inputs. It exports pure update functions (setUnit, setStockText, …) that
+  each return a new immutable LinearState. P1-T09 (pieces) and P1-T10 (solver) import
+  the same state type and update functions; components coordinate via a DOM
+  'linear-state-change' CustomEvent rather than prop-drilling through Astro slots.
 
 KNOWN ISSUES / BLOCKERS:
 - Q2: Contact email or form for the About page (not blocking yet)
-- Q3: Home page hub or stays Linear tool? (Resolved: D10 home page is the tool)
+- Q3: Resolved: D10 home page is the tool
+- Pre-existing: BaseLayout.astro line 299 has `3px solid transparent` (nav underline
+  indicator). Not introduced in P1-T08. Will fix in P1-T15 accessibility pass.
 
-NEXT MODEL: SONNET (P1-T08 through P1-T11, P1-T17)
+NEXT MODEL: FLASH high for P1-T09. Then SONNET for P1-T10.
 
 DEPLOY: live at https://shree878.github.io/cut-list-calculator/ (verified 2026-11-22)

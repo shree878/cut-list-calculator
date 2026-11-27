@@ -1,0 +1,898 @@
+---
+/**
+ * src/components/LinearSettings.astro
+ *
+ * Stock + settings inputs for the Linear Cutting Calculator (P1-T08).
+ * Renders the HTML structure; a <script> block hydrates it and wires up
+ * the linear-state.ts module for reactive updates.
+ *
+ * Contains:
+ *   • Units toggle (Metric / Imperial, segmented control)
+ *   • Stock rows (length + quantity, add / remove)
+ *   • Kerf field
+ *   • Collapsed "Advanced settings" <details> section
+ *
+ * Does NOT contain the pieces list (P1-T09) or the Calculate button (P1-T10).
+ */
+
+import t from '../i18n/en.json';
+---
+
+<section class="settings-panel" aria-label={t['settings.sectionLabel']}>
+
+  <!-- ── Units toggle ─────────────────────────────────────────── -->
+  <fieldset class="fieldset units-fieldset">
+    <legend class="field-label">{t['settings.unitsLabel']}</legend>
+    <p class="field-hint" id="units-hint">{t['settings.unitsHint']}</p>
+
+    <div class="unit-toggle" role="group" aria-describedby="units-hint">
+      <!-- Metric sub-toggle -->
+      <div class="unit-toggle__group">
+        <button
+          type="button"
+          class="unit-btn"
+          data-unit="mm"
+          data-system="metric"
+          aria-pressed="false"
+        >mm</button>
+        <button
+          type="button"
+          class="unit-btn"
+          data-unit="cm"
+          data-system="metric"
+          aria-pressed="false"
+        >cm</button>
+        <button
+          type="button"
+          class="unit-btn"
+          data-unit="m"
+          data-system="metric"
+          aria-pressed="false"
+        >m</button>
+      </div>
+
+      <span class="unit-toggle__divider" aria-hidden="true">|</span>
+
+      <!-- Imperial sub-toggle -->
+      <div class="unit-toggle__group">
+        <button
+          type="button"
+          class="unit-btn"
+          data-unit="in"
+          data-system="imperial"
+          aria-pressed="false"
+        >in</button>
+        <button
+          type="button"
+          class="unit-btn"
+          data-unit="ft"
+          data-system="imperial"
+          aria-pressed="false"
+        >ft</button>
+      </div>
+    </div>
+  </fieldset>
+
+  <!-- ── Stock lengths ────────────────────────────────────────── -->
+  <fieldset class="fieldset stock-fieldset">
+    <legend class="field-label">{t['settings.stockHeading']}</legend>
+    <p class="field-hint" id="stock-hint">{t['settings.stockHint']}</p>
+
+    <!-- Stock rows are injected here by script -->
+    <div class="stock-rows" id="stock-rows" aria-describedby="stock-hint">
+      <!-- populated by script -->
+    </div>
+
+    <button
+      type="button"
+      class="btn btn--secondary add-stock-btn"
+      id="add-stock-btn"
+    >
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" width="20" height="20">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/>
+      </svg>
+      {t['settings.addStock']}
+    </button>
+  </fieldset>
+
+  <!-- ── Kerf ─────────────────────────────────────────────────── -->
+  <div class="field kerf-field">
+    <label class="field-label" for="kerf-input">{t['settings.kerfLabel']}</label>
+    <div class="field-row">
+      <input
+        type="text"
+        id="kerf-input"
+        class="text-input"
+        value="0"
+        inputmode="decimal"
+        autocomplete="off"
+        spellcheck="false"
+        aria-describedby="kerf-hint kerf-error"
+        aria-invalid="false"
+      />
+      <span class="field-unit" id="kerf-unit" aria-hidden="true">mm</span>
+    </div>
+    <p class="field-hint" id="kerf-hint">{t['settings.kerfHint']}</p>
+    <p class="field-error" id="kerf-error" role="alert" aria-live="polite"></p>
+  </div>
+
+  <!-- ── Advanced settings (collapsed) ────────────────────────── -->
+  <details class="advanced-details" id="advanced-details">
+    <summary class="advanced-summary">
+      <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" width="18" height="18">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6"/>
+      </svg>
+      {t['settings.advancedLabel']}
+    </summary>
+
+    <div class="advanced-body">
+      <!-- kerfAfterLast switch -->
+      <div class="field switch-field">
+        <div class="switch-row">
+          <label class="field-label switch-label" for="kerf-after-last">
+            {t['settings.kerfAfterLastLabel']}
+          </label>
+          <button
+            type="button"
+            role="switch"
+            id="kerf-after-last"
+            aria-checked="false"
+            aria-describedby="kerf-after-last-hint"
+            class="switch-btn"
+          >
+            <span class="switch-thumb" aria-hidden="true"></span>
+            <span class="sr-only">Off</span>
+          </button>
+        </div>
+        <p class="field-hint" id="kerf-after-last-hint">{t['settings.kerfAfterLastHint']}</p>
+      </div>
+
+      <!-- Plain kerf rule statement -->
+      <p class="kerf-rule-note" id="kerf-rule-note">
+        {t['settings.kerfRuleNote']}
+      </p>
+    </div>
+  </details>
+
+</section>
+
+<!-- Hidden template for a stock row (cloned by script) -->
+<template id="stock-row-tpl">
+  <div class="stock-row" data-row-id="">
+    <div class="stock-row__fields">
+      <!-- Length -->
+      <div class="field stock-length-field">
+        <label class="field-label sr-only-mobile" data-label="length"></label>
+        <div class="field-row">
+          <input
+            type="text"
+            class="text-input stock-length-input"
+            inputmode="decimal"
+            autocomplete="off"
+            spellcheck="false"
+            aria-invalid="false"
+          />
+          <span class="field-unit stock-unit" aria-hidden="true"></span>
+        </div>
+        <p class="field-error stock-length-error" role="alert" aria-live="polite"></p>
+      </div>
+
+      <!-- Quantity -->
+      <div class="field stock-qty-field">
+        <label class="field-label sr-only-mobile" data-label="qty"></label>
+        <div class="field-row">
+          <input
+            type="text"
+            class="text-input stock-qty-input"
+            inputmode="numeric"
+            autocomplete="off"
+            spellcheck="false"
+            aria-invalid="false"
+          />
+        </div>
+        <p class="field-error stock-qty-error" role="alert" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <!-- Remove button -->
+    <button type="button" class="btn btn--ghost remove-stock-btn" aria-label="">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" width="20" height="20">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+</template>
+
+<style>
+  /* ── Settings panel shell ─────────────────────────────────── */
+  .settings-panel {
+    display:        flex;
+    flex-direction: column;
+    gap:            var(--space-5);
+  }
+
+  /* ── Fieldset reset ───────────────────────────────────────── */
+  .fieldset {
+    border:  none;
+    padding: 0;
+    margin:  0;
+  }
+
+  /* ── Field label ──────────────────────────────────────────── */
+  .field-label {
+    display:       block;
+    font-size:     var(--text-body);
+    font-weight:   var(--weight-label);
+    color:         var(--color-text);
+    margin-bottom: var(--space-1);
+  }
+
+  /* ── Field hint ───────────────────────────────────────────── */
+  .field-hint {
+    font-size:  var(--text-small);
+    color:      var(--color-text-muted);
+    margin:     0 0 var(--space-2) 0;
+    line-height: var(--leading-body);
+  }
+
+  /* ── Field error ──────────────────────────────────────────── */
+  .field-error {
+    font-size:  var(--text-small);
+    color:      var(--color-danger);
+    margin:     var(--space-1) 0 0 0;
+    min-height: 1.2em;
+    line-height: var(--leading-body);
+  }
+  .field-error:empty { display: none; }
+
+  /* ── field-row: input + unit badge ───────────────────────── */
+  .field-row {
+    display:        flex;
+    align-items:    stretch;
+    gap:            0;
+  }
+
+  /* ── Text input ───────────────────────────────────────────── */
+  .text-input {
+    flex:           1 1 0;
+    min-width:      0;
+    height:         var(--input-height);           /* 56 px */
+    padding:        0 var(--space-3);
+    font-size:      var(--text-input);             /* 20 px */
+    font-family:    var(--font-ui);
+    color:          var(--color-text);
+    background:     var(--color-bg);
+    border:         1px solid var(--color-border);
+    border-radius:  var(--radius-s) 0 0 var(--radius-s);
+    outline:        none;
+    transition:     border-color var(--duration-fast) var(--easing);
+    font-variant-numeric: var(--numeric-tabular);
+  }
+  .text-input:focus {
+    border-color:  var(--color-brand);
+    box-shadow:    0 0 0 var(--focus-offset) var(--color-brand);
+    position:      relative; /* bring above unit badge */
+    z-index:       1;
+  }
+  .text-input[aria-invalid="true"] {
+    border-color:  var(--color-danger);
+  }
+
+  /* ── Unit badge ───────────────────────────────────────────── */
+  .field-unit {
+    display:         flex;
+    align-items:     center;
+    padding:         0 var(--space-3);
+    font-size:       var(--text-body);
+    font-weight:     var(--weight-label);
+    color:           var(--color-text-muted);
+    background:      var(--color-surface);
+    border:          1px solid var(--color-border);
+    border-left:     none;
+    border-radius:   0 var(--radius-s) var(--radius-s) 0;
+    white-space:     nowrap;
+    user-select:     none;
+  }
+
+  /* ── Units toggle (segmented control) ────────────────────── */
+  .units-fieldset legend {
+    float: left; /* legend flows naturally with fieldset */
+    width: 100%;
+    margin-bottom: var(--space-1);
+  }
+  /* Clear float */
+  .units-fieldset legend + * { clear: both; }
+
+  .unit-toggle {
+    display:     flex;
+    align-items: center;
+    gap:         var(--space-2);
+    flex-wrap:   wrap;
+  }
+
+  .unit-toggle__group {
+    display: flex;
+  }
+
+  .unit-toggle__divider {
+    color:       var(--color-border);
+    font-size:   var(--text-body);
+    padding:     0 var(--space-1);
+    line-height: var(--input-height);
+  }
+
+  .unit-btn {
+    display:        flex;
+    align-items:    center;
+    justify-content: center;
+    min-width:      var(--tap-target-min);  /* 48 px */
+    height:         var(--tap-target-min);  /* 48 px */
+    padding:        0 var(--space-3);
+    font-size:      var(--text-body);
+    font-weight:    var(--weight-label);
+    font-family:    var(--font-ui);
+    color:          var(--color-text);
+    background:     var(--color-bg);
+    border:         1px solid var(--color-border);
+    border-right:   none;
+    cursor:         pointer;
+    transition:     background var(--duration-fast) var(--easing),
+                    color       var(--duration-fast) var(--easing);
+  }
+
+  .unit-toggle__group .unit-btn:first-child {
+    border-radius: var(--radius-s) 0 0 var(--radius-s);
+  }
+  .unit-toggle__group .unit-btn:last-child {
+    border-right:   1px solid var(--color-border);
+    border-radius:  0 var(--radius-s) var(--radius-s) 0;
+  }
+  .unit-toggle__group .unit-btn:only-child {
+    border-radius:  var(--radius-s);
+    border-right:   1px solid var(--color-border);
+  }
+
+  .unit-btn:hover {
+    background: var(--color-surface);
+  }
+  .unit-btn:focus-visible {
+    outline:        var(--focus-ring);
+    outline-offset: var(--focus-offset);
+    position:       relative;
+    z-index:        1;
+  }
+  .unit-btn[aria-pressed="true"] {
+    background: var(--color-brand);
+    color:      var(--color-on-brand);
+    border-color: var(--color-brand);
+    z-index:    0;
+  }
+  /* When a pressed button has a sibling that also has the brand border, fix overlap */
+  .unit-btn[aria-pressed="true"] + .unit-btn {
+    border-left-color: var(--color-brand);
+  }
+
+  /* ── Stock rows ───────────────────────────────────────────── */
+  .stock-rows {
+    display:        flex;
+    flex-direction: column;
+    gap:            var(--space-2);
+    margin-bottom:  var(--space-3);
+  }
+
+  .stock-row {
+    display:        flex;
+    align-items:    flex-start;
+    gap:            var(--space-2);
+  }
+
+  .stock-row__fields {
+    display:        flex;
+    flex:           1 1 0;
+    gap:            var(--space-2);
+    min-width:      0;
+    flex-wrap:      wrap;
+  }
+
+  .stock-length-field {
+    flex:           2 1 var(--stock-length-basis);
+    min-width:      0;
+  }
+
+  .stock-qty-field {
+    flex:           1 1 var(--stock-qty-basis);
+    min-width:      var(--stock-qty-basis);
+  }
+
+  /* Row-level column headers (shown above first row only) */
+  .stock-row:first-child .sr-only-mobile {
+    /* On mobile keep label sr-only; on 480+ show it */
+  }
+
+  /* ── Add stock button ─────────────────────────────────────── */
+  .add-stock-btn {
+    align-self:  flex-start;
+    display:     flex;
+    align-items: center;
+    gap:         var(--space-2);
+  }
+
+  /* ── Remove button ────────────────────────────────────────── */
+  .remove-stock-btn {
+    min-width:      var(--tap-target-min);
+    min-height:     var(--tap-target-min);
+    padding:        0 var(--space-2);
+    flex-shrink:    0;
+    color:          var(--color-text-muted);
+  }
+  .remove-stock-btn:hover {
+    color: var(--color-danger);
+  }
+
+  /* ── Button base styles ───────────────────────────────────── */
+  .btn {
+    display:        inline-flex;
+    align-items:    center;
+    justify-content: center;
+    min-height:     var(--tap-target-min);  /* 48 px */
+    padding:        0 var(--space-4);
+    font-size:      var(--text-body);
+    font-weight:    var(--weight-label);
+    font-family:    var(--font-ui);
+    border-radius:  var(--radius-s);
+    cursor:         pointer;
+    transition:     background var(--duration-fast) var(--easing),
+                    color       var(--duration-fast) var(--easing),
+                    border-color var(--duration-fast) var(--easing);
+  }
+  .btn:focus-visible {
+    outline:        var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+  .btn--secondary {
+    color:          var(--color-brand);
+    background:     transparent;
+    border:         1px solid var(--color-brand);
+  }
+  .btn--secondary:hover {
+    background:     var(--color-surface);
+  }
+  .btn--ghost {
+    color:          var(--color-text-muted);
+    background:     transparent;
+    border:         none;
+  }
+  .btn--ghost:hover {
+    background: var(--color-surface);
+  }
+
+  .btn-icon {
+    flex-shrink: 0;
+  }
+
+  /* ── Kerf field ───────────────────────────────────────────── */
+  .kerf-field {
+    max-width: var(--kerf-field-max-width);
+  }
+
+  /* ── Advanced details ─────────────────────────────────────── */
+  .advanced-details {
+    border:        1px solid var(--color-border);
+    border-radius: var(--radius-s);
+    overflow:      hidden;
+  }
+
+  .advanced-summary {
+    display:         flex;
+    align-items:     center;
+    gap:             var(--space-2);
+    padding:         var(--space-3) var(--space-4);
+    font-size:       var(--text-body);
+    font-weight:     var(--weight-label);
+    color:           var(--color-text);
+    cursor:          pointer;
+    user-select:     none;
+    list-style:      none; /* hide default marker */
+    min-height:      var(--tap-target-min);
+    background:      var(--color-surface);
+  }
+  .advanced-summary::-webkit-details-marker { display: none; }
+  .advanced-summary:focus-visible {
+    outline:        var(--focus-ring);
+    outline-offset: calc(-1 * var(--focus-offset));
+  }
+
+  .chevron-icon {
+    transition:    transform var(--duration-fast) var(--easing);
+    flex-shrink:   0;
+  }
+  .advanced-details[open] .chevron-icon {
+    transform: rotate(90deg);
+  }
+
+  .advanced-body {
+    padding:        var(--space-4);
+    display:        flex;
+    flex-direction: column;
+    gap:            var(--space-4);
+  }
+
+  /* ── Switch (kerfAfterLast) ───────────────────────────────── */
+  .switch-row {
+    display:         flex;
+    align-items:     center;
+    justify-content: space-between;
+    gap:             var(--space-4);
+  }
+
+  .switch-label {
+    margin:    0;
+    flex:      1 1 0;
+    font-size: var(--text-body);
+    cursor:    pointer;
+  }
+
+  .switch-btn {
+    position:        relative;
+    display:         inline-flex;
+    align-items:     center;
+    width:           var(--switch-track-width);
+    height:          var(--tap-target-min);   /* 48 px — includes the visible track */
+    flex-shrink:     0;
+    background:      transparent;
+    border:          none;
+    cursor:          pointer;
+    padding:         0;
+  }
+  .switch-btn:focus-visible {
+    outline:        var(--focus-ring);
+    outline-offset: var(--focus-offset);
+    border-radius:  var(--radius-s);
+  }
+
+  /* Track — centred in the button */
+  .switch-btn::before {
+    content:       '';
+    position:      absolute;
+    left:          50%;
+    transform:     translateX(-50%);
+    width:         var(--switch-track-width);
+    height:        var(--switch-track-height);
+    border-radius: var(--switch-track-radius);
+    background:    var(--color-border);
+    transition:    background var(--duration-fast) var(--easing);
+  }
+  .switch-btn[aria-checked="true"]::before {
+    background: var(--color-brand);
+  }
+
+  .switch-thumb {
+    position:      absolute;
+    left:          50%;
+    transform:     translateX(calc(-50% - var(--switch-thumb-offset)));
+    width:         var(--switch-thumb-size);
+    height:        var(--switch-thumb-size);
+    border-radius: 50%;
+    background:    var(--color-on-brand);
+    box-shadow:    var(--shadow-1);
+    transition:    transform var(--duration-fast) var(--easing);
+  }
+  .switch-btn[aria-checked="true"] .switch-thumb {
+    transform: translateX(calc(-50% + var(--switch-thumb-offset)));
+  }
+
+  /* ── Kerf rule note ───────────────────────────────────────── */
+  .kerf-rule-note {
+    font-size:   var(--text-small);
+    color:       var(--color-text-muted);
+    margin:      0;
+    line-height: var(--leading-body);
+    padding:     var(--space-3);
+    background:  var(--color-surface);
+    border-radius: var(--radius-s);
+    border-left: var(--border-accent-width) solid var(--color-border);
+  }
+
+  /* ── Utilities ────────────────────────────────────────────── */
+  .sr-only {
+    position:   absolute;
+    width:      1px;
+    height:     1px;
+    overflow:   hidden;
+    clip:       rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  /* On very narrow phones: quantity input can be sr-only-mobile */
+  @media (max-width: 479px) {
+    .sr-only-mobile {
+      position:   absolute;
+      width:      1px;
+      height:     1px;
+      overflow:   hidden;
+      clip:       rect(0 0 0 0);
+      white-space: nowrap;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Hydration script for LinearSettings.
+   * Imports linear-state.ts to manage state; updates DOM reactively.
+   * All text comes from the en.json strings rendered as data-attributes.
+   */
+  import {
+    createLinearState,
+    setUnit,
+    setStockText,
+    setStockQty,
+    addStockRow,
+    removeStockRow,
+    setKerf,
+    setKerfAfterLast,
+    type LinearState,
+    type StockRow,
+  } from '../lib/linear-state.js';
+
+  import type { DisplayUnit } from '../lib/units.js';
+
+  // ---------------------------------------------------------------------------
+  // i18n strings accessible to script (embedded as JS literals from Astro)
+  // ---------------------------------------------------------------------------
+  const i18n = {
+    stockLengthLabel: 'Length',
+    stockQtyLabel: 'Qty',
+    stockQtyPlaceholder: 'unlimited',
+    removeStock: 'Remove this stock row',
+    placeholders: {
+      mm: 'e.g. 2400',
+      cm: 'e.g. 240',
+      m:  'e.g. 2.4',
+      in: 'e.g. 96',
+      ft: 'e.g. 8',
+    } as Record<DisplayUnit, string>,
+    kerfPlaceholders: {
+      mm: 'e.g. 3.2',
+      cm: 'e.g. 0.32',
+      m:  'e.g. 0.0032',
+      in: 'e.g. 1/8',
+      ft: 'e.g. 0.01',
+    } as Record<DisplayUnit, string>,
+  };
+
+  // ---------------------------------------------------------------------------
+  // State
+  // ---------------------------------------------------------------------------
+  let state: LinearState = createLinearState();
+
+  // ---------------------------------------------------------------------------
+  // DOM refs
+  // ---------------------------------------------------------------------------
+  const unitBtns = document.querySelectorAll<HTMLButtonElement>('.unit-btn');
+  const stockRowsEl = document.getElementById('stock-rows')!;
+  const addStockBtn = document.getElementById('add-stock-btn')!;
+  const kerfInput = document.getElementById('kerf-input') as HTMLInputElement;
+  const kerfUnitEl = document.getElementById('kerf-unit')!;
+  const kerfError = document.getElementById('kerf-error')!;
+  const kerfAfterLastBtn = document.getElementById('kerf-after-last')!;
+  const tpl = document.getElementById('stock-row-tpl') as HTMLTemplateElement;
+
+  // ---------------------------------------------------------------------------
+  // Render helpers
+  // ---------------------------------------------------------------------------
+
+  function renderUnitButtons(unit: DisplayUnit): void {
+    unitBtns.forEach(btn => {
+      const pressed = btn.dataset.unit === unit;
+      btn.setAttribute('aria-pressed', String(pressed));
+    });
+  }
+
+  function renderKerfUnit(unit: DisplayUnit): void {
+    kerfUnitEl.textContent = unit;
+  }
+
+  function renderKerfError(error: string): void {
+    kerfError.textContent = error;
+    kerfInput.setAttribute('aria-invalid', error ? 'true' : 'false');
+  }
+
+  function buildStockRowEl(row: StockRow, unit: DisplayUnit, index: number, totalRows: number): HTMLElement {
+    const clone = tpl.content.cloneNode(true) as DocumentFragment;
+    const el = clone.querySelector('.stock-row') as HTMLElement;
+    el.dataset.rowId = row.id;
+
+    const lengthInput = el.querySelector<HTMLInputElement>('.stock-length-input')!;
+    const lengthLabel = el.querySelector<HTMLElement>('[data-label="length"]')!;
+    const lengthUnit  = el.querySelector<HTMLElement>('.stock-unit')!;
+    const lengthError = el.querySelector<HTMLElement>('.stock-length-error')!;
+    const qtyInput    = el.querySelector<HTMLInputElement>('.stock-qty-input')!;
+    const qtyLabel    = el.querySelector<HTMLElement>('[data-label="qty"]')!;
+    const qtyError    = el.querySelector<HTMLElement>('.stock-qty-error')!;
+    const removeBtn   = el.querySelector<HTMLButtonElement>('.remove-stock-btn')!;
+
+    const rowNum = index + 1;
+
+    // IDs for accessibility
+    const lengthId = `stock-length-${row.id}`;
+    const qtyId    = `stock-qty-${row.id}`;
+    const lenErrId = `stock-length-err-${row.id}`;
+    const qtyErrId = `stock-qty-err-${row.id}`;
+
+    lengthInput.id = lengthId;
+    lengthInput.value = row.rawText;
+    lengthInput.placeholder = i18n.placeholders[unit];
+    lengthInput.setAttribute('aria-describedby', lenErrId);
+    lengthInput.setAttribute('aria-invalid', row.error ? 'true' : 'false');
+    lengthInput.setAttribute('aria-label', `${i18n.stockLengthLabel} ${rowNum}`);
+
+    lengthLabel.textContent = `${i18n.stockLengthLabel} ${rowNum}`;
+    lengthLabel.setAttribute('for', lengthId);
+    lengthUnit.textContent = unit;
+
+    lengthError.id = lenErrId;
+    lengthError.textContent = row.error;
+
+    qtyInput.id = qtyId;
+    qtyInput.value = row.rawQty === 'unlimited' || row.qty === Infinity ? '' : row.rawQty;
+    qtyInput.placeholder = i18n.stockQtyPlaceholder;
+    qtyInput.setAttribute('aria-describedby', qtyErrId);
+    qtyInput.setAttribute('aria-invalid', row.qtyError ? 'true' : 'false');
+    qtyInput.setAttribute('aria-label', `${i18n.stockQtyLabel} ${rowNum}`);
+
+    qtyLabel.textContent = `${i18n.stockQtyLabel} ${rowNum}`;
+    qtyLabel.setAttribute('for', qtyId);
+
+    qtyError.id = qtyErrId;
+    qtyError.textContent = row.qtyError;
+
+    removeBtn.setAttribute('aria-label', `${i18n.removeStock} ${rowNum}`);
+    removeBtn.disabled = totalRows <= 1;
+    removeBtn.style.visibility = totalRows <= 1 ? 'hidden' : 'visible';
+
+    // Events
+    lengthInput.addEventListener('input', () => {
+      state = setStockText(state, row.id, lengthInput.value);
+      // only update error in-place, don't re-render whole list (preserve focus)
+      const r = state.stockRows.find(x => x.id === row.id);
+      if (r) {
+        lengthError.textContent = r.error;
+        lengthInput.setAttribute('aria-invalid', r.error ? 'true' : 'false');
+      }
+      dispatchStateChange();
+    });
+
+    qtyInput.addEventListener('input', () => {
+      state = setStockQty(state, row.id, qtyInput.value);
+      const r = state.stockRows.find(x => x.id === row.id);
+      if (r) {
+        qtyError.textContent = r.qtyError;
+        qtyInput.setAttribute('aria-invalid', r.qtyError ? 'true' : 'false');
+      }
+      dispatchStateChange();
+    });
+
+    removeBtn.addEventListener('click', () => {
+      state = removeStockRow(state, row.id);
+      renderStockRows();
+      dispatchStateChange();
+    });
+
+    return el;
+  }
+
+  function renderStockRows(): void {
+    const { stockRows, unit } = state;
+    // diff by id — keep existing inputs if id matches, to preserve focus
+    const existingIds = new Set(
+      Array.from(stockRowsEl.children).map(el => (el as HTMLElement).dataset.rowId)
+    );
+    const newIds = new Set(stockRows.map(r => r.id));
+
+    // Remove rows no longer in state
+    Array.from(stockRowsEl.children).forEach(el => {
+      const id = (el as HTMLElement).dataset.rowId;
+      if (id && !newIds.has(id)) el.remove();
+    });
+
+    // Insert / update rows in correct order
+    stockRows.forEach((row, idx) => {
+      const existing = stockRowsEl.querySelector<HTMLElement>(`[data-row-id="${row.id}"]`);
+      if (!existing) {
+        // New row — build and insert at correct position
+        const newEl = buildStockRowEl(row, unit, idx, stockRows.length);
+        const nextSibling = stockRowsEl.children[idx] ?? null;
+        stockRowsEl.insertBefore(newEl, nextSibling);
+      } else {
+        // Existing row — update remove button disabled state
+        const removeBtn = existing.querySelector<HTMLButtonElement>('.remove-stock-btn')!;
+        removeBtn.disabled = stockRows.length <= 1;
+        removeBtn.style.visibility = stockRows.length <= 1 ? 'hidden' : 'visible';
+        // Update unit badge
+        const unitBadge = existing.querySelector<HTMLElement>('.stock-unit');
+        if (unitBadge) unitBadge.textContent = unit;
+        // Update placeholder
+        const lengthInput = existing.querySelector<HTMLInputElement>('.stock-length-input');
+        if (lengthInput) lengthInput.placeholder = i18n.placeholders[unit];
+      }
+    });
+  }
+
+  function renderKerfAfterLast(val: boolean): void {
+    kerfAfterLastBtn.setAttribute('aria-checked', String(val));
+    const srEl = kerfAfterLastBtn.querySelector('.sr-only');
+    if (srEl) srEl.textContent = val ? 'On' : 'Off';
+  }
+
+  // ---------------------------------------------------------------------------
+  // Full render (called on unit change — re-renders stock rows from scratch
+  // since placeholders and unit badges all change)
+  // ---------------------------------------------------------------------------
+  function renderAll(): void {
+    renderUnitButtons(state.unit);
+    renderKerfUnit(state.unit);
+    // Update kerf placeholder
+    kerfInput.placeholder = i18n.kerfPlaceholders[state.unit];
+    renderKerfError(state.kerfError);
+    renderKerfAfterLast(state.kerfAfterLast);
+    // Full stock rows rebuild on unit change
+    stockRowsEl.innerHTML = '';
+    state.stockRows.forEach((row, idx) => {
+      stockRowsEl.appendChild(buildStockRowEl(row, state.unit, idx, state.stockRows.length));
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // State-change event (for P1-T09 and P1-T10 to listen on)
+  // ---------------------------------------------------------------------------
+  function dispatchStateChange(): void {
+    document.dispatchEvent(new CustomEvent('linear-state-change', { detail: state }));
+  }
+
+  // ---------------------------------------------------------------------------
+  // Wire up events
+  // ---------------------------------------------------------------------------
+
+  // Unit buttons
+  unitBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const unit = btn.dataset.unit as DisplayUnit;
+      state = setUnit(state, unit);
+      // Save to localStorage via the module (already done inside setUnit → saveUnit)
+      try { localStorage.setItem('clc_unit', unit); } catch { /* ignore */ }
+      renderAll();
+      dispatchStateChange();
+    });
+  });
+
+  // Add stock row
+  addStockBtn.addEventListener('click', () => {
+    state = addStockRow(state);
+    renderStockRows();
+    // Focus the new length input
+    const rows = stockRowsEl.querySelectorAll<HTMLInputElement>('.stock-length-input');
+    rows[rows.length - 1]?.focus();
+    dispatchStateChange();
+  });
+
+  // Kerf
+  kerfInput.addEventListener('input', () => {
+    state = setKerf(state, kerfInput.value);
+    renderKerfError(state.kerfError);
+    kerfInput.setAttribute('aria-invalid', state.kerfError ? 'true' : 'false');
+    dispatchStateChange();
+  });
+
+  // kerfAfterLast switch
+  kerfAfterLastBtn.addEventListener('click', () => {
+    state = setKerfAfterLast(state, !state.kerfAfterLast);
+    renderKerfAfterLast(state.kerfAfterLast);
+    dispatchStateChange();
+  });
+
+  // ---------------------------------------------------------------------------
+  // Initial render
+  // ---------------------------------------------------------------------------
+  renderAll();
+</script>

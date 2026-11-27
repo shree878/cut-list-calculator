@@ -9,9 +9,12 @@
  * Uses ToolLayout for the shared title block, "i How to use" button,
  * and below-tool section structure.
  *
- * The tool slot is a placeholder until P1-T08 adds real inputs.
+ * P1-T08: Stock + settings inputs in the tool slot.
+ * P1-T09 will add the pieces list to this same slot.
+ * P1-T10 will add the Calculate button and results.
  */
 import ToolLayout from '../layouts/ToolLayout.astro';
+import LinearSettings from '../components/LinearSettings.astro';
 import t from '../i18n/en.json';
 ---
 
@@ -21,9 +24,11 @@ import t from '../i18n/en.json';
   promise={t['linear.promise']}
   description={t['site.tagline']}
 >
-  <!-- Tool slot: calculator form + results (P1-T08 through P1-T12 will fill this) -->
-  <div slot="tool" class="tool-placeholder">
-    <p class="tool-placeholder__text">{t['index.comingSoon']}</p>
+  <!-- Tool slot: settings + (future) pieces list + calculate + results -->
+  <div slot="tool" class="tool-form">
+    <LinearSettings />
+    <!-- P1-T09 will add <LinearPieces /> here -->
+    <!-- P1-T10 will add <LinearCalculate /> and results here -->
   </div>
 
   <!-- How-to slot: numbered steps -->
@@ -36,20 +41,11 @@ import t from '../i18n/en.json';
 </ToolLayout>
 
 <style>
-  /* Placeholder panel — removed in P1-T08 when real inputs arrive */
-  .tool-placeholder {
-    background:    var(--color-surface);
-    border:        1px solid var(--color-border);
-    border-radius: var(--radius-m);
-    padding:       var(--space-6);
-    text-align:    center;
-    min-height:    var(--space-8);
-  }
-
-  .tool-placeholder__text {
-    font-size: var(--text-body);
-    color:     var(--color-text-muted);
-    margin:    0;
+  /* Tool form wrapper */
+  .tool-form {
+    display:        flex;
+    flex-direction: column;
+    gap:            var(--space-5);
   }
 
   /* How-to numbered list */

@@ -165,3 +165,27 @@
   --focus-offset:            2px;
   --link-underline-offset:   3px;   /* space between text baseline and underline */
 }
+
+/* =========================================================
+   10. COMPONENT GEOMETRY
+   Fixed internal geometry for components that cannot use
+   the spacing scale directly (switch thumb, flex basis etc.)
+   ========================================================= */
+:root {
+  /* Switch (segmented toggle, role=switch) */
+  --switch-track-width:      52px;
+  --switch-track-height:     28px;
+  --switch-track-radius:     14px;   /* half of track height */
+  --switch-thumb-size:       22px;
+  --switch-thumb-offset:     11px;   /* (track-width/2 - thumb-size/2 + 2) */
+
+  /* Alert / note accent border */
+  --border-accent-width:     4px;
+
+  /* Stock row flex-basis values */
+  --stock-length-basis:      120px;
+  --stock-qty-basis:         80px;
+
+  /* Kerf field max-width */
+  --kerf-field-max-width:    280px;
+}
